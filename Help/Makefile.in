@@ -41,7 +41,6 @@ am__aclocal_m4_deps = $(top_srcdir)/tcl.m4 $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
-CONFIG_CLEAN_FILES =
 SOURCES =
 DIST_SOURCES =
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
@@ -167,6 +166,7 @@ HelpIndexBuilder = $(top_srcdir)/BuildScripts/HelpIndexBuild.tcl
 IndexHHBuilder = $(top_srcdir)/BuildScripts/IndexHH.tcl
 IndexHH = index.hh
 EXTRA_DIST = $(HelpFiles) $(GIFFiles)
+CONFIG_CLEAN_FILES = $(HelpIndex) $(IndexHH)
 help_DATA = $(HelpFiles) $(GIFFiles) $(GeneratedHelpFiles) $(HelpIndex) \
 	$(IndexHH)
 

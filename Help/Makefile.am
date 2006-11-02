@@ -9,7 +9,7 @@ IndexHHBuilder = $(top_srcdir)/BuildScripts/IndexHH.tcl
 IndexHH = index.hh
 
 EXTRA_DIST = $(HelpFiles) $(GIFFiles)
-
+CONFIG_CLEAN_FILES = $(HelpIndex) $(IndexHH)
 help_DATA = $(HelpFiles) $(GIFFiles) $(GeneratedHelpFiles) $(HelpIndex) \
 	$(IndexHH)
 

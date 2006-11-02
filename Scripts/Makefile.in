@@ -42,7 +42,6 @@ am__aclocal_m4_deps = $(top_srcdir)/tcl.m4 $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
-CONFIG_CLEAN_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(scriptlibdir)"
 binSCRIPT_INSTALL = $(INSTALL_SCRIPT)
 SCRIPTS = $(bin_SCRIPTS)
@@ -173,6 +172,7 @@ LibraryScripts = BWHelp.tcl labelselectcolor.tcl panedw.tcl fileentry.tcl \
 EXTRA_DIST = $(LibraryScripts) HL3.src
 scriptlib_DATA = $(LibraryScripts) pkgIndex.tcl
 bin_SCRIPTS = HL3
+CONFIG_CLEAN_FILES = HL3
 all: all-am
 
 .SUFFIXES:
@@ -367,7 +367,6 @@ uninstall-am: uninstall-binSCRIPTS uninstall-info-am \
 
 pkgIndex.tcl : $(LibraryScripts)
 	echo "pkg_mkIndex . $(LibraryScripts)" | $(TCLSH_PROG)
-
 HL3 : HL3.src
 	sed -f $(top_srcdir)/config_tcl <$< >$@
 	chmod +x $@

@@ -18,7 +18,7 @@ pkgIndex.tcl : $(LibraryScripts)
 	echo "pkg_mkIndex . $(LibraryScripts)" | $(TCLSH_PROG)
 
 bin_SCRIPTS = HL3
-
+CONFIG_CLEAN_FILES = HL3
 HL3 : HL3.src
 	sed -f $(top_srcdir)/config_tcl <$< >$@
 	chmod +x $@
