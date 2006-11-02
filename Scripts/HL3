@@ -1,0 +1,429 @@
+#!/usr/bin/wish8.4
+
+global prefix libdir datadir exec_prefix scriptlibdir helpdir imagelibdir
+global PACKAGE VERSION
+set prefix "/usr/local"
+set exec_prefix "/usr/local"
+set libdir "${exec_prefix}/lib"
+set datadir "${prefix}/share"
+set PACKAGE "homelibrarian"
+set VERSION "3.0"
+set scriptlibdir "[file join $datadir $PACKAGE-$VERSION scriptlib]"
+set imagelibdir "[file join $datadir $PACKAGE-$VERSION imagelib]"
+set helpdir "[file join $datadir $PACKAGE-$VERSION Help]"
+
+set scriptdir [file dirname [info script]]
+if {[catch [list file normalize $scriptdir] normsd]} {
+  set here [pwd]
+  cd $scriptdir
+  set normsd [pwd]
+  cd $here
+}
+set scriptdir $normsd
+if {![string equal [file dirname $scriptdir] "$exec_prefix"]} {
+  set scriptlibdir $scriptdir
+  set imagelibdir [file join [file dirname $scriptdir] Images]
+  set helpdir [file join [file dirname $scriptdir] Help]
+}
+
+global auto_path
+set auto_path [concat $scriptlibdir /usr/lib/bwidget1.7 /usr/share/tcl8.4/tcllib-1.8/snit /usr/share/tcl8.4/http2.4 /usr/lib/TclODBC0.1 /usr/lib/Tclxml3.1 $auto_path]
+#puts "*** HL3: auto_path = $auto_path"
+global imageDir
+set imageDir $imagelibdir
+#puts "*** HL3: imageDir = $imageDir"
+
+global HelpDir
+set HelpDir $helpdir
+#puts "*** HL3: HelpDir = $HelpDir"
+package require Splash
+
+#puts stderr "*** About to create splash screen"
+
+image create photo Windows::DeepwoodsBanner -file [file join "$imageDir" DeepwoodsBanner.gif]
+image create photo Windows::FaceFrontSmall -file [file join "$imageDir" ffrontSmall.gif]
+image create photo Windows::FaceProfileSmall -file [file join "$imageDir" fsideSmall.gif]
+
+wm withdraw .
+
+namespace eval Windows {
+   splash .hl3Splash \
+	-title {Home Librarian 3.0, Copyright (C) 2006 Robert Heller D/B/A Deepwoods  Software. Home Librarian 3.0comes with ABSOLUTELY NO WARRANTY; for details select 'Warranty...' under the Help menu.  This is free software, and you are welcome to redistribute it under certain conditions; select 'Copying...' under the Help menu.} \
+	-image Windows::DeepwoodsBanner -background {#2ba2bf} \
+	-titleforeground white -statusforeground {black} \
+	-icon Windows::FaceFrontSmall
+}
+
+#puts stderr "*** Splash done"
+
+proc Windows::SplashWorkMessage {message percent} {
+  .hl3Splash update "$message" $percent
+  update idle
+}
+
+proc Windows::HideSplash {script} {
+  wm withdraw .hl3Splash
+  catch {uplevel $script}
+  wm deiconify .hl3Splash
+  update
+}
+
+
+catch [list source ~/.wishrc]
+option add connectionString {} widgetDefault
+catch { option readfile /etc/hl.conf startupFile }
+catch { option readfile ~/.hlrc  startupFile }
+catch { option readfile .hlrc startupFile }
+
+namespace eval Database {#dummy}
+namespace eval Search {#dummy}
+namespace eval Edit {#dummy}
+namespace eval Windows {
+  variable Main
+  variable AnimatedHeader
+  variable Manager
+  variable MainButtons
+  variable HeaderFont
+  
+  snit::widgetadaptor HomeLibrarianTopLevel {
+    typevariable toplevelMenuIndex -array {}
+    typevariable toplevelSelfIndex -array {}
+    typevariable bannerfont {}
+    typeconstructor {
+      global imageDir
+      if {[lsearch -exact [font families] {new century schoolbook}] >= 0} {
+	set bannerfont [list {new century schoolbook} -18 bold roman]
+      } else {
+	set bannerfont [list times -18 bold roman]
+      }
+    }
+    component mainframe
+    component   header
+    component     facelabel
+    component     headbanner
+    component   frame
+    delegate option -height to mainframe
+    delegate option -width  to mainframe
+    option -separator -default both
+    delegate method {mainframe *} to mainframe except {getframe}
+    delegate method {frame *} to frame
+    method getframe {} {return $frame}
+    option -transientparent -readonly yes -default {}
+    option -title -default {Untitled} -configuremethod _SetTitle
+    method _SetTitle {option value} {
+      set options($option) "$value"
+      wm title [winfo toplevel $win] "$value"
+      $headbanner configure -text "$value"
+      set windowsMenu [$Windows::Main mainframe getmenu windows]
+      if {[catch "set toplevelSelfIndex($self)" menuIndex]} {
+        $windowsMenu add command -command [mymethod _Raise] -label "$value"
+        set mi [$windowsMenu index end]
+        set toplevelSelfIndex($self) $mi
+        set toplevelMenuIndex($mi) $self
+      } else {
+        $windowsMenu entryconfigure $menuIndex -label "$value"
+      }
+    }
+    method _Raise {} {
+      set tl [winfo toplevel $win]
+      wm deiconify $tl
+      raise $tl
+    }
+    destructor {
+#      puts stderr "*** $self destructor"
+      set windowsMenu [$Windows::Main mainframe getmenu windows]
+      if {![catch "set toplevelSelfIndex($self)" menuIndex]} {
+	$windowsMenu delete $menuIndex
+        unset toplevelMenuIndex($menuIndex)
+	incr menuIndex
+        unset toplevelSelfIndex($self)
+	while {![catch "set toplevelMenuIndex($menuIndex)" tl]} {
+	  set toplevelMenuIndex([expr {$menuIndex - 1}]) $tl
+	  set toplevelSelfIndex($tl) [expr {$menuIndex - 1}]
+	  unset toplevelMenuIndex($menuIndex)
+	  incr menuIndex
+	}
+      }
+    }
+    option -windowmenu -readonly yes -default {}
+    variable progress
+    method setprogress {v} {set progress $v}
+    variable status
+    method setstatus {v} {set status "$v"}
+    delegate option * to hull
+    constructor {args} {
+      set options(-transientparent) [from args -transientparent]
+      installhull using toplevel -class HomeLibrarianTopLevel
+      if {![string equal "$options(-transientparent)" {}]} {
+	wm transient $win $options(-transientparent)
+      }
+      set options(-windowmenu) [from args -windowmenu]
+      set options(-separator) [from args -separator]
+      set status {}
+      set progress 0
+      install mainframe using MainFrame $win.main -menu "$options(-windowmenu)" \
+      			-separator $options(-separator) \
+			-textvariable [myvar status] \
+			-progressvar [myvar progress] \
+			-progressmax 100 -progresstype normal
+      pack $mainframe -expand yes -fill both
+      $mainframe showstatusbar progression
+      set f [$mainframe getframe]
+      install header using frame $f.header -borderwidth {2} -relief flat
+      pack $header -fill x
+      install facelabel using label $header.facelabel -image Windows::FaceFrontSmall -relief flat
+      pack $facelabel -side left
+      install headbanner using label $header.headbanner \
+	-bg yellow -fg brown -font $bannerfont -text {}
+      pack $headbanner -side right -expand yes -fill both
+      install frame using frame $f.frame -borderwidth {4} -relief ridge
+      pack $frame -expand yes -fill both
+      $self configurelist $args
+    }
+  }
+}
+
+proc Windows::MainWindow {} {
+  variable Main
+  variable AnimatedHeader
+  variable Manager
+  variable MainButtons
+  pack [set Main [mainwindow .main \
+	-menu {
+	   "&File" {file:menu} {file} 0 {
+		{command "&New" {file:new db:havedb db:havewrite} "Create a new card catalog" {Ctrl n} -command Database::New -state disabled}
+		{command "&Open..." {} "" {} -state disabled}
+		{command "&Save" {} "" {} -state disabled}
+		{command "Save &As..." {} "" {} -state disabled}
+		{command "&Print..." {db:havedb db:havewrite} "Print A Card Catalog" {Ctrl p} -command Print::CardCatalog -state disabled}
+		{command "Import..." {file:import db:havedb db:havewrite} "Import datafile" {} -command Windows::Import -state disabled}
+		{command "&Close" {file:close} "Close the application" {Ctrl q} -command Windows::Exit}
+		{command "E&xit" {file:exit} "Exit the application" {Ctrl q} -command Windows::Exit}
+	    }
+	    "&Edit" {edit:menu} {edit} 0 {
+		{command "&Undo" {edit:undo} "Undo last change" {Ctrl z} -state disabled}
+		{command "Cu&t" {edit:cut edit:havesel} "Cut selection to the paste buffer" {Ctrl x}  -state disabled}
+		{command "&Copy" {edit:copy edit:havesel} "Copy selection to the paste buffer" {Ctrl c}  -state disabled}
+		{command "&Paste" {edit:paste edit:havesel} "Paste in the paste buffer" {Ctrl v}  -state disabled}
+		{command "C&lear" {edit:clear edit:havesel} "Clear selection" {}  -state disabled}
+		{command "&Delete" {edit:delete edit:havesel} "Delete selection" {Ctrl d} -state disabled}
+		{separator}
+		{command "Select All" {edit:selectall} "Select everything" {} -state disabled}
+		{command "De-select All" {edit:deselectall edit:havesel} "Select nothing" {} -state disabled}
+	    }
+	    "&View" {view:menu} {view} 0 {
+	        {command "Database" {view:database db:havedb} "View Database" {} -state disabled -command Database::ViewDB}
+	    }
+	    "&Options" {options:menu} {options} 0 {
+		{command "Edit a Print Layout file" {options:edlayout db:havedb} "Edit or Create a Print Layout file" {} -state disabled -command Print::EditLayout}
+		{separator}
+		{command "Edit a template Card" {options:edtemp db:havedb db:havewrite} "Edit or create template card" {} -state disabled -command Edit::EditATemplate}
+		{command "Remove a template Card" {options:rmtemp db:havedb db:havewrite} "Edit or create template card" {} -state disabled -command Edit::DeleteTemplate}
+		{command "Save a template Card to a file" {options:savetemp db:havedb db:havewrite} "Edit or create template card" {} -state disabled -command Edit::SaveTemplate}
+		{command "Load a template Card from a file" {options:loadtemp db:havedb db:havewrite} "Edit or create template card" {} -state disabled -command Edit::LoadTemplate}
+	    }
+	    "&Windows" {windows:menu} {windows} 0 {
+	    }
+	    "&Help" {help:menu} {help} 0 {
+		{command "On &Context..." {help:context} "Help on context" {} -command BWHelp::HelpContext}
+		{command "On &Help..." {help:help} "Help on help" {} -command "BWHelp::HelpTopic Help"}
+		{command "On &Window..." {help:window} "Help on the current window" {} -command "BWHelp::HelpWindow"}
+		{command "On &Keys..." {help:keys} "Help on keyboard accelerators" {} -command "BWHelp::HelpTopic Keys"}
+		{command "&Index..." {help:index} "Help index" {} -command "BWHelp::HelpTopic Index"}
+		{command "&Tutorial..." {help:tutorial} "Tutorial" {}  -command "BWHelp::HelpTopic Tutorial"}
+		{command "On &Version" {help:version} "Version" {} -command "BWHelp::HelpTopic Version"}
+		{command "Warranty" {help:warranty} "Warranty" {} -command "BWHelp::HelpTopic Warranty"}
+		{command "Copying" {help:copying} "Copying" {} -command "BWHelp::HelpTopic Copying"}
+	    }}]]  -expand yes -fill both
+  wm protocol . WM_DELETE_WINDOW Windows::Exit
+  set uframe [$Main getuserframe]
+  pack [set AnimatedHeader [AnimatedHeader::AnimatedHeader $uframe.animatedHeader]] -fill x
+  pack [set Manager [PagesManager::create $uframe.manager]] -expand yes -fill both
+  set mf [$Manager add main]
+  pack [set MainButtons [ButtonBox::create $mf.mainButtons \
+				-orient vertical \
+				-spacing   25 \
+				-homogeneous no]] -expand yes -fill both
+  Search::SearchPane
+  
+  Edit::EditPane 
+  $MainButtons add -name exit -text "Exit Program" \
+			      -font {Helvetica -34 bold roman} \
+			      -background {yellow} -activeforeground {yellow} \
+			      -foreground {brown} -activebackground {brown} \
+			      -command Windows::Exit
+#  puts stderr "*** Windows::MainWindow: main added"
+  $Manager compute_size
+  $AnimatedHeader SetMessage {How May I Help You?}
+  $Manager raise main
+}
+
+package require BWFileEntry
+
+namespace eval Windows {
+  snit::type ImportDialog {
+    pragma -hastypeinfo    no
+    pragma -hastypedestroy no
+    pragma -hasinstances   no
+
+    typevariable _FileName {}
+    typevariable _FileTypes {
+	{{Text Files}       {.txt}        TEXT}
+	{{CSV Files}        {.csv}        TEXT}
+	{{ASC1 Files}       {.asc1}       TEXT}
+	{{ASC2 Files}       {.asc2}       TEXT}
+	{{All Files}        *             }
+    }
+    typemethod getfile {} {return "$_FileName"}
+    typecomponent dialog
+    typecomponent filenameFE
+    typeconstructor {
+      set dialog [Dialog::create .importDialog \
+		    -class ImportDialog -side bottom -bitmap questhead \
+		    -modal local -title "Import Datafile" \
+		    -cancel 3]
+      $dialog add -name import1 -text {Import V1 Ascii} -command [mytypemethod _Import1]
+      $dialog add -name import2 -text {Import V2 Ascii} -command [mytypemethod _Import2]
+      $dialog add -name cancel -text Cancel -command [mytypemethod _Cancel]
+      $dialog add -name help -text Help -command "BWHelp::HelpTopic ImportDialog"
+      set frame [$dialog getframe]
+      set filenameFE [FileEntry::create $frame.filenameFE -filedialog open \
+			-title "File to import" -filetypes $_FileTypes]
+      pack $filenameFE -fill x
+    }
+    typemethod _Import1 {} {
+      set _FileName "[$filenameFE cget -text]"
+      $dialog withdraw
+      return [$dialog enddialog import1]
+    }
+    typemethod _Import2 {} {
+      set _FileName "[$filenameFE cget -text]"
+      $dialog withdraw
+      return [$dialog enddialog import2]
+    }
+    typemethod _Cancel {} {
+      $dialog withdraw
+      return [$dialog enddialog cancel]
+    }
+    typemethod draw {} {
+      set button [$dialog draw]
+      return "$button"
+    }
+  }
+}
+
+proc Windows::Import {} {
+  switch [ImportDialog draw] {
+    cancel {}
+    import1 {
+      package require ImportV1Ascii
+      if {[catch [list open "[ImportDialog getfile]" r] infp]} {
+	tk_messageBox -type ok -icon error -message "$infp"
+	return
+      }
+      set importer [ImportV1Ascii::ImportV1Ascii %AUTO% -in $infp]
+      $Windows::AnimatedHeader StartWorking
+      if {[catch [list $importer import] error]} {
+	set message "$error"
+      } else {
+	switch [lindex $error 0] {
+	  0 {set message "Imported no cards"}
+	  1 {set message "Imported one card"}
+	  default {set message "Imported [lindex $error 0] cards"}
+	}
+	switch [lindex $error 1] {
+	  0 {append message "\nand no keywords."}
+	  1 {append message "\nand one keywork."}
+	  default {append message "\nand [lindex $error 1] keywords."}
+	}
+      }
+      $Windows::AnimatedHeader EndWorking "$message"
+      close $infp
+      $importer destroy
+      return
+    }
+    import2 {
+      package require ImportV2Ascii
+      if {[catch [list open "[ImportDialog getfile]" r] infp]} {
+	tk_messageBox -type ok -icon error -message "$infp"
+	return
+      }
+      set importer [ImportV2Ascii::ImportV2Ascii %AUTO% -in $infp]
+      $Windows::AnimatedHeader StartWorking
+      if {[catch [list $importer import] error]} {
+	set message "$error"
+      } else {
+	switch [lindex $error 0] {
+	  0 {set message "Imported no cards"}
+	  1 {set message "Imported one card"}
+	  default {set message "Imported [lindex $error 0] cards"}
+	}
+	switch [lindex $error 1] {
+	  0 {append message "\nand no keywords."}
+	  1 {append message "\nand one keywork."}
+	  default {append message "\nand [lindex $error 1] keywords."}
+	}
+      }
+      $Windows::AnimatedHeader EndWorking "$message"
+      close $infp
+      $importer destroy
+      return
+    }
+  }
+}
+
+proc Windows::Exit {{dontask 0}} {
+  if {$dontask || [tk_messageBox -type yesno -icon question \
+	-message "Are you sure you really want to exit?"]} {
+    catch {Database::CloseDatabase}
+    exit
+  }
+}
+
+package require MainWindow
+Windows::SplashWorkMessage "MainWindow loaded" 8
+package require BWHelp
+Windows::SplashWorkMessage "BWHelp loaded" 17
+package require AnimatedHeader
+Windows::SplashWorkMessage "AnimatedHeader loaded" 25
+package require BWLabelSpinBox
+Windows::SplashWorkMessage "BWLabelSpinBox loaded" 33
+package require BWLabelComboBox
+Windows::SplashWorkMessage "BWLabelComboBox loaded" 42
+package require AECFunctions
+Windows::SplashWorkMessage "AECFunctions loaded" 50
+package require DatabaseFunctions
+Windows::SplashWorkMessage "DatabaseFunctions loaded" 58
+package require SearchWindow
+Windows::SplashWorkMessage "SearchWindow loaded" 67
+package require EditWindow
+Windows::SplashWorkMessage "EditWindow loaded" 75
+package require PrintFunctions
+Windows::SplashWorkMessage "PrintFunctions loaded" 83
+update
+
+#  puts stderr "*** Connecting to database..."
+if {[catch {Database::ConnectToDatabase} message]} {
+  tk_messageBox -type ok -icon error -message "$message"
+}
+if {[catch {Database::IsWritableData} message]} {
+  global errorInfo
+  tk_messageBox -type ok -icon error -message "$message ($errorInfo)"
+}
+#  puts stderr "*** Connected to database..."
+
+Windows::SplashWorkMessage "Connected To Database" 92
+
+Windows::MainWindow
+
+if {[Database::HaveData]} {
+  $Windows::Main mainframe setmenustate db:havedb normal
+  if {[Database::IsWritableData]} {
+    $Windows::Main mainframe setmenustate db:havewrite normal
+  }
+}
+$Windows::Main showit
+
+
+catch {Windows::SplashWorkMessage {Done} 100}
+

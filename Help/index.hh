@@ -1,0 +1,26 @@
+0 Index
+<Copying>
+<EditCard>
+<EditLayout>
+<EditLayoutBitmapToolDialog>
+<EditLayoutLineToolDialog>
+<EditLayoutRectDiskToolDialog>
+<EditLayoutResizeToolDialog>
+<EditLayoutTextToolDialog>
+<EditTemplate>
+<GetConnectionStringDialog>
+<GetNewCardTemplateOrAmazonURLDialog>
+<GetNewKeyDialog>
+<Help>
+<ImportDialog>
+<Keys>
+<MoreInfoWindow>
+<PrintProgress>
+<SelectALayoutDialog>
+<SelectATemplateDialog>
+<SelectPrinterDialog>
+<Tutorial>
+<Version>
+<ViewAmazonData>
+<Warranty>
+<tlHelp>
