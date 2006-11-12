@@ -115,11 +115,11 @@ namespace eval Windows {
       wm title [winfo toplevel $win] "$value"
       $headbanner configure -text "$value"
       set windowsMenu [$Windows::Main mainframe getmenu windows]
-      if {[catch "set toplevelSelfIndex($self)" menuIndex]} {
+      if {[catch "set toplevelSelfIndex($win)" menuIndex]} {
         $windowsMenu add command -command [mymethod _Raise] -label "$value"
         set mi [$windowsMenu index end]
-        set toplevelSelfIndex($self) $mi
-        set toplevelMenuIndex($mi) $self
+        set toplevelSelfIndex($win) $mi
+        set toplevelMenuIndex($mi) $win
       } else {
         $windowsMenu entryconfigure $menuIndex -label "$value"
       }
@@ -132,11 +132,11 @@ namespace eval Windows {
     destructor {
 #      puts stderr "*** $self destructor"
       set windowsMenu [$Windows::Main mainframe getmenu windows]
-      if {![catch "set toplevelSelfIndex($self)" menuIndex]} {
+      if {![catch "set toplevelSelfIndex($win)" menuIndex]} {
 	$windowsMenu delete $menuIndex
         unset toplevelMenuIndex($menuIndex)
 	incr menuIndex
-        unset toplevelSelfIndex($self)
+        unset toplevelSelfIndex($win)
 	while {![catch "set toplevelMenuIndex($menuIndex)" tl]} {
 	  set toplevelMenuIndex([expr {$menuIndex - 1}]) $tl
 	  set toplevelSelfIndex($tl) [expr {$menuIndex - 1}]
@@ -178,6 +178,7 @@ namespace eval Windows {
       pack $headbanner -side right -expand yes -fill both
       install frame using frame $f.frame -borderwidth {4} -relief ridge
       pack $frame -expand yes -fill both
+      $self configure -title Untitled
       $self configurelist $args
     }
   }
