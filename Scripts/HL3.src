@@ -1,40 +1,16 @@
 #!=WISH=
 
-global prefix libdir datadir exec_prefix scriptlibdir helpdir imagelibdir
-global PACKAGE VERSION
-set prefix "=prefix="
-set exec_prefix "=exec_prefix="
-set libdir "=libdir="
-set datadir "=datadir="
-set PACKAGE "=PACKAGE="
-set VERSION "=VERSION="
-set scriptlibdir "[file join $datadir $PACKAGE-$VERSION scriptlib]"
-set imagelibdir "[file join $datadir $PACKAGE-$VERSION imagelib]"
-set helpdir "[file join $datadir $PACKAGE-$VERSION Help]"
+set argv0 [info nameofexecutable]
 
-set scriptdir [file dirname [info script]]
-if {[catch [list file normalize $scriptdir] normsd]} {
-  set here [pwd]
-  cd $scriptdir
-  set normsd [pwd]
-  cd $here
-}
-set scriptdir $normsd
-if {![string equal [file dirname $scriptdir] "$exec_prefix"]} {
-  set scriptlibdir $scriptdir
-  set imagelibdir [file join [file dirname $scriptdir] Images]
-  set helpdir [file join [file dirname $scriptdir] Help]
-}
-
-global auto_path
-set auto_path [concat $scriptlibdir =BWLIB= =SNITLIB= =HTTPLIB= =TCLODBCLIB= =TCLXMLLIB= $auto_path]
-#puts "*** HL3: auto_path = $auto_path"
 global imageDir
-set imageDir $imagelibdir
+set imageDir [file join [file dirname [file dirname [file dirname \
+			[info script]]]] Images]
 #puts "*** HL3: imageDir = $imageDir"
 
 global HelpDir
-set HelpDir $helpdir
+set HelpDir  [file join [file dirname [file dirname [file dirname \
+			[info script]]]] Help]
+
 #puts "*** HL3: HelpDir = $HelpDir"
 package require Splash
 
@@ -111,6 +87,7 @@ namespace eval Windows {
     option -transientparent -readonly yes -default {}
     option -title -default {Untitled} -configuremethod _SetTitle
     method _SetTitle {option value} {
+      set value [string range "$value" 0 64]
       set options($option) "$value"
       wm title [winfo toplevel $win] "$value"
       $headbanner configure -text "$value"

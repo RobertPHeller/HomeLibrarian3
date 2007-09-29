@@ -4,8 +4,11 @@
 #* Created by Robert Heller on Mon Sep 11 21:46:41 2006
 #* ------------------------------------------------------------------
 #* Modification History: $Log$
-#* Modification History: Revision 1.1  2006/11/02 19:55:53  heller
-#* Modification History: Initial revision
+#* Modification History: Revision 1.2  2007/09/29 14:17:57  heller
+#* Modification History: 3.0b1 Lockdown
+#* Modification History:
+#* Modification History: Revision 1.1.1.1  2006/11/02 19:55:53  heller
+#* Modification History: Imported Sources
 #* Modification History:
 #* Modification History: Revision 1.1  2002/07/28 14:03:50  heller
 #* Modification History: Add it copyright notice headers
@@ -38,8 +41,14 @@
 
 package require BWidget
 package require snit
-package require TclODBC
 package require BWLabelComboBox
+
+if {[package vcompare [package present Tcl] 8.5] < 0} {
+  package require dict
+}
+
+package require snodbc;#                DB interface code (tclodbc compatible)
+
 
 namespace eval Database {
   variable ConnectionString {}
@@ -98,7 +107,6 @@ Create Table Keywords (
     typecomponent connectionstringEntry
     typeconstructor {
       set dialog [Dialog::create .getConnectionStringDialog \
-			-class GetConnectionStringDialog \
 			-side bottom -bitmap questhead \
 			-modal local -title "Get Connection String" \
 			-default 0 -cancel 1]
@@ -209,8 +217,34 @@ Create Table Keywords (
   }
 }
 
+proc Database::CheckFields {dataArray} {
+  upvar $dataArray data
+
+  foreach k {Key Title Author Subject Location Category Media Publisher 
+	     PubLocation Edition ISBN} \
+	  l {36 128 64 128 36 36 36 36 36 36 20} {
+    if {[string length "$data($k)"] > $l} {
+      tk_messageBox -icon error -type ok \
+		    -message "Field $k is too long (maximum length is $l): $data($k)"
+      return 0
+    }
+  }
+}
+
+
 proc Database::GetConnectionString {environment} {
   return [GetConnectionStringDialog draw -evironment $environment]
+}
+
+namespace eval Database {
+  variable GenID 0
+}
+
+proc Database::gensym {prefix} {
+  variable GenID
+
+  incr GenID
+  return "${prefix}$GenID" 
 }
 
 proc Database::ConnectToDatabase {} {
@@ -218,7 +252,7 @@ proc Database::ConnectToDatabase {} {
   variable Connection
   variable Environment
   set ConnectionString [option get . connectionString ConnectionString]
-  set Environment [database]
+  set Environment database
   while {1} {
 #    puts stderr "*** Database::ConnectToDatabase (top of while loop): ConnectionString = '$ConnectionString'"
     if {[string equal "$ConnectionString" {}]} {
@@ -226,17 +260,17 @@ proc Database::ConnectToDatabase {} {
         set ConnectionString [GetConnectionString $Environment]
       }
       if {[string equal "$ConnectionString" {}]} {
-        $Environment -delete
         Windows::Exit yes
       }
     }
-    if {[catch [list $Environment connect "$ConnectionString"] Connection]} {
+    set connCmd [list $Environment connect [gensym conn] "$ConnectionString"]
+    if {[catch "$connCmd" Connection]} {
+      global errorInfo
+#      puts stderr "*** Database::ConnectToDatabase: $Connection: $errorInfo"
       tk_messageBox -type ok -icon error -message "$Connection"
       set Connection {}
       set ConnectionString {}
       continue
-    } else {
-      $Connection -acquire
     }
 #    puts stderr "*** Database::ConnectToDatabase: Connection = '$Connection'"
     if {![HaveData]} {
@@ -244,7 +278,7 @@ proc Database::ConnectToDatabase {} {
 	if {[AskCreateTables]} {
 	  New 1
 	} else {
-	  $Connection -delete
+	  $Connection disconnect
 	  set Connection {}
 	  set ConnectionString {}
 	  continue
@@ -280,25 +314,24 @@ proc Database::CloseDatabase {} {
   variable DeleteCard
   variable SelectWhere
 
-  if {![string equal $DeleteCard {}]} {$DeleteCard -delete;set DeleteCard {}}
-  if {![string equal $UpdateCard {}]} {$UpdateCard -delete;set UpdateCard {}}
-  if {![string equal $InsertCard {}]} {$InsertCard -delete;set InsertCard {}}
-  if {![string equal $DeleteKeywordsByKey {}]} {$DeleteKeywordsByKey -delete;set DeleteKeywordsByKey {}}
-  if {![string equal $InsertKeyword {}]} {$InsertKeyword -delete;set InsertKeyword {}}
-  if {![string equal $KeywordsByKey {}]} {$KeywordsByKey -delete;set KeywordsByKey {}}
-  if {![string equal $CardByKeyword {}]} {$CardByKeyword -delete;set CardByKeyword {}}
-  if {![string equal $CardBySubject {}]} {$CardBySubject -delete;set CardBySubject {}}
-  if {![string equal $CardByAuthor {}]} {$CardByAuthor -delete;set CardByAuthor {}}
-  if {![string equal $CardByTitle {}]} {$CardByTitle -delete;set CardByTitle {}}
-  if {![string equal $CardByKey {}]} {$CardByKey -delete;set CardByKey {}}
-  if {![string equal $CardByKeyExact {}]} {$CardByKeyExact -delete;set CardByKeyExact {}}
-  if {![string equal $SelectWhere {}]} {$SelectWhere -delete;set SelectWhere {}}
+  if {![string equal $DeleteCard {}]} {$DeleteCard drop;set DeleteCard {}}
+  if {![string equal $UpdateCard {}]} {$UpdateCard drop;set UpdateCard {}}
+  if {![string equal $InsertCard {}]} {$InsertCard drop;set InsertCard {}}
+  if {![string equal $DeleteKeywordsByKey {}]} {$DeleteKeywordsByKey drop;set DeleteKeywordsByKey {}}
+  if {![string equal $InsertKeyword {}]} {$InsertKeyword drop;set InsertKeyword {}}
+  if {![string equal $KeywordsByKey {}]} {$KeywordsByKey drop;set KeywordsByKey {}}
+  if {![string equal $CardByKeyword {}]} {$CardByKeyword drop;set CardByKeyword {}}
+  if {![string equal $CardBySubject {}]} {$CardBySubject drop;set CardBySubject {}}
+  if {![string equal $CardByAuthor {}]} {$CardByAuthor drop;set CardByAuthor {}}
+  if {![string equal $CardByTitle {}]} {$CardByTitle drop;set CardByTitle {}}
+  if {![string equal $CardByKey {}]} {$CardByKey drop;set CardByKey {}}
+  if {![string equal $CardByKeyExact {}]} {$CardByKeyExact drop;set CardByKeyExact {}}
+  if {![string equal $SelectWhere {}]} {$SelectWhere drop;set SelectWhere {}}
   if {![string equal $Connection {}]} {
-    if {![$Connection cget -attr_autocommit]} {$Connection commit}
-    $Connection -delete
+    if {![$Connection get autocommit]} {$Connection commit}
+    $Connection disconnect
     set Connection {}
   }
-  if {![string equal $Environment {}]} {$Environment -delete;set Environment {}}
   set ConnectionString {}
 }
   
@@ -307,12 +340,8 @@ proc Database::HaveData {} {
   variable Connection
 #  puts stderr "*** Database::HaveData: Connection = '$Connection'"
   if {[string equal "$Connection" {}]} {return no}
-  switch [$Connection cget -identifier_case] {
-    mixed -
-    sensitive {set c [$Connection run tables Cards]}
-    upper {set c [$Connection run tables CARDS]}
-    lower {set c [$Connection run tables cards]}
-  }
+
+  set c [$Connection tables cards]
 #  puts stderr "*** Database::HaveData: c1 = '$c1', c2 = '$c2', c3 = '$c3'"
   if {[llength $c] < 1} {
     return no
@@ -323,50 +352,17 @@ proc Database::HaveData {} {
 
 proc Database::IsWritableData {} {
   variable Connection
-  if {[catch "$Connection cget -attr_access_mode" accmode]} {set accmode write}
-  switch "$accmode" {
-    read {return no}
-    write {
-        set user [$Connection cget -user_name]
-	set INSERT no
-	set UPDATE no
-	set DELETE no
-	switch [$Connection cget -identifier_case] {
-	  mixed -
-	  sensitive {set table Cards}
-	  upper     {set table CARDS}
-	  lower     {set table cards}
-	}
-	if {[catch {
-		set s [$Connection statement tableprivileges]
-		$s execute [list $table]
-	        } error]} {
-	  set INSERT yes
-	  set UPDATE yes
-	  set DELETE yes
-	} else {
-	  while {[$s fetch row {Cat Scheme Name Grantor Grantee Privilege 
-			        Is_Grantable}]} {
-	    parray row
-	    if {[string equal "$row(Grantee)" "$user"]} {
-	      if {[string equal "$row(Privilege)" INSERT]} {set INSERT yes}
-	      if {[string equal "$row(Privilege)" UPDATE]} {set UPDATE yes}
-	      if {[string equal "$row(Privilege)" DELETE]} {set DELETE yes}
-	    }
-	  }
-	}
-        return [expr {$INSERT && $UPDATE && $DELETE}]
-    }
-  }
+
+  return yes
 }
 
 proc Database::CountMatchingCards {whereclause} {
   variable Connection
 
   if {![string equal "$whereclause" {}]} {
-    set count [$Connection run "select distinct count(*) from cards where $whereclause"]
+    set count [$Connection "select distinct count(*) from cards where $whereclause"]
   } else {
-    set count [$Connection run "select distinct count(*) from cards"]
+    set count [$Connection "select distinct count(*) from cards"]
   }
   return [lindex $count 0]
 }
@@ -375,7 +371,7 @@ proc Database::StartWhereSelect {{whereclause {}} {orderbycolumn {}}} {
   variable Connection
   variable SelectWhere
 
-  if {![string equal "$SelectWhere" {}]} {$SelectWhere -delete;set SelectWhere {}}
+  if {![string equal "$SelectWhere" {}]} {$SelectWhere drop;set SelectWhere {}}
   set clauses {}
   if {![string equal "$whereclause" {}]} {
     append clauses "where $whereclause"
@@ -383,7 +379,7 @@ proc Database::StartWhereSelect {{whereclause {}} {orderbycolumn {}}} {
   if {![string equal "$orderbycolumn" {}]} {
    append clauses " order by $orderbycolumn"
   }
-  set SelectWhere [$Connection statement "select distinct * from cards $clauses"]
+  set SelectWhere [$Connection statement [Database::gensym stmt] "select distinct * from cards $clauses"]
   $SelectWhere execute
 }
 
@@ -399,7 +395,7 @@ proc Database::NextCard {rowvar} {
   if {$result} {
     return true
   } else {
-    $SelectWhere -delete
+    $SelectWhere drop
     set SelectWhere {}
     return false
   }
@@ -410,8 +406,10 @@ proc Database::GetCardByKey {key rowvar} {
   upvar $rowvar row
   variable Connection
   variable CardByKeyExact
+
   if {[string equal "$CardByKeyExact" {}]} {
-    set CardByKeyExact [$Connection statement {select * from cards where key = ?}]
+    set CardByKeyExact [$Connection statement [Database::gensym stmt] \
+	{select * from cards where key = ?} {CHAR}]
   }
   $CardByKeyExact execute [list [string toupper "$key"]]
   return [$CardByKeyExact fetch row {Key Title Author Subject Description 
@@ -478,35 +476,42 @@ namespace eval Database {
       switch -exact $mode {
 	Id {
 	  if {[string equal "$CardByKey" {}]} {
-	    set CardByKey [$Connection statement {select distinct * from cards where key like ?}]
+	    set CardByKey [$Connection statement [Database::gensym stmt] \
+			{select distinct * from cards where key like ?} {CHAR}]
 	  }
 	  set search $CardByKey
 	  set field {}
 	}
 	Title {
 	  if {[string equal "$CardByTitle" {}]} {
-	    set CardByTitle [$Connection statement {select distinct * from cards where title like ?}]
+	    set CardByTitle [$Connection statement [Database::gensym stmt] \
+			{select distinct * from cards where title like ?} {CHAR}]
 	  }
 	  set search $CardByTitle
 	  set field {}
 	}
 	Author {
 	  if {[string equal "$CardByAuthor" {}]} {
-	    set CardByAuthor [$Connection statement {select distinct * from cards where author like ?}]
+	    set CardByAuthor [$Connection statement [Database::gensym stmt] \
+		{select distinct * from cards where author like ?} {CHAR}]
 	  }
 	  set search $CardByAuthor
 	  set field Author
 	}
 	Subject {
 	  if {[string equal "$CardBySubject" {}]} {
-	    set CardBySubject [$Connection statement {select distinct * from cards where subject like ?}]
+	    set CardBySubject [$Connection statement [Database::gensym stmt] \
+		{select distinct * from cards where subject like ?} {CHAR}]
 	  }
 	  set search $CardBySubject
 	  set field Subject
 	}
 	Keyword {
 	  if {[string equal "$CardByKeyword" {}]} {
-	    set CardByKeyword [$Connection statement {select distinct * from cards where cards.key = keywords.key AND keywords.keyword LIKE ?}]
+	    set CardByKeyword [$Connection statement [Database::gensym stmt] \
+		{select distinct * from cards where cards.key = keywords.key 
+						AND keywords.keyword LIKE ?} \
+		{CHAR}]
 	  }
 	  set search $CardByKeyword
 	  set field {}
@@ -546,7 +551,8 @@ proc Database::GetKeywordsForKey {key} {
   variable KeywordsByKey
 
   if {[string equal "$KeywordsByKey" {}]} {
-    set CardByKeyword [$Connection statement {select keyword from keywords where key = ?}]
+    set CardByKeyword [$Connection statement [Database::gensym stmt] \
+			{select keyword from keywords where key = ?} {CHAR}]
   }
   $CardByKeyword execute [list [string toupper "$key"]]
   set keywords {}
@@ -596,8 +602,11 @@ proc Database::InsertCard {dataArray {LogText {}}} {
   upvar $dataArray data
 
   if {[string equal "$InsertCard" {}]} {
-    set InsertCard [$Connection statement {insert into cards values (?,?,?,?,?,?,?,?,?,?,?,?,?)}]
+    set InsertCard [$Connection statement [Database::gensym stmt] \
+	{insert into cards values (?,?,?,?,?,?,?,?,?,?,?,?,?)} \
+	{CHAR CHAR CHAR CHAR CHAR CHAR CHAR CHAR CHAR CHAR DATE CHAR CHAR}]
   }
+  if {![CheckFields data]} {return 0}
   set res [catch {$InsertCard run [list \
 		[string toupper "$data(Key)"] \
 		[string toupper "$data(Title)"] \
@@ -625,30 +634,22 @@ proc Database::InsertKeywordsForKey {key keywordlist {LogText {}}} {
 
   set key [string toupper "$key"]
   if {[string equal "$InsertKeyword" {}]} {
-    set InsertKeyword [$Connection statement {insert into Keywords values(?,?)}]
+    set InsertKeyword [$Connection statement [Database::gensym stmt] \
+	{insert into Keywords values(?,?)} {CHAR CHAR}]
   }
+  if {[string length "$key"] > 36} {set key [string range "$key" 0 36]}
+  set keywordlist1 {}
+  foreach k $keywordlist {
+    if {[string length "$k"] > 64} {
+      lappend keywordlist1 [string range "$k" 0 64]
+    } else {
+      lappend keywordlist1 "$k"
+    }
+  }
+  set keywordlist $keywordlist1
   set res 0
   foreach kw $keywordlist {
     incr res [catch {$InsertKeyword run [list [string toupper "$kw"] "$key"]} error]
-    if {![string equal "$LogText" {}]} {
-      $LogText insert end "InsertKeyword: $error\n"
-    }
-  }
-  return [expr {$res == 0}]
-}
-
-proc Database::InsertKeysForKeyword {keyword keylist {LogText {}}} {
-  variable Connection
-  variable InsertKeyword
-
-  if {[string equal "$InsertKeyword" {}]} {
-    set InsertKeyword [$Connection statement {insert into Keywords values(?,?)}]
-  }
-  set res 0
-  set keyword [string toupper "$keyword"]
-  foreach key $keylist {
-    set key [string toupper "$key"]
-    incr res [catch {$InsertKeyword run [list "$keyword" "$key"]} error]
     if {![string equal "$LogText" {}]} {
       $LogText insert end "InsertKeyword: $error\n"
     }
@@ -661,7 +662,8 @@ proc Database::DeleteKeywordsForKey {key {LogText {}}} {
   variable Connection
 
   if {[string equal "$DeleteKeywordsByKey" {}]} {
-    set DeleteKeywordsByKey [$Connection statement {delete from Keywords where key = ?}]
+    set DeleteKeywordsByKey [$Connection statement [Database::gensym stmt] \
+	{delete from Keywords where key = ?} {CHAR}]
   }
   set res [catch {$DeleteKeywordsByKey run [list [string toupper "$key"]]} error]
   if {![string equal "$LogText" {}]} {
@@ -676,19 +678,22 @@ proc Database::UpdateCard {dataArray {LogText {}}} {
   upvar $dataArray data
 
   if {[string equal "$UpdateCard" {}]} {
-    set UpdateCard [$Connection statement {update cards set Title = ?,
-							    Author = ?,
-							    Subject = ?,
-							    Description = ?,
-							    Location = ?,
-							    Category = ?,
-							    Media = ?,
-							    Publisher = ?,
-							    PubLocation = ?,
-							    PubDate = ?,
-							    Edition = ?,
-							    ISBN = ? where key = ?}]
+    set UpdateCard [$Connection statement [Database::gensym stmt] \
+	{update cards set Title = ?,
+			  Author = ?,
+			  Subject = ?,
+			  Description = ?,
+			  Location = ?,
+			  Category = ?,
+			  Media = ?,
+			  Publisher = ?,
+			  PubLocation = ?,
+			  PubDate = ?,
+			  Edition = ?,
+			 ISBN = ? where key = ?} \
+	{CHAR CHAR CHAR CHAR CHAR CHAR CHAR CHAR CHAR DATE CHAR CHAR CHAR}]
   }
+  if {![CheckFields data]} {return 0}
   set res [catch {$UpdateCard run [list \
 		[string toupper "$data(Title)"] \
 		[string toupper "$data(Author)"] \
@@ -715,7 +720,8 @@ proc Database::DeleteCard {key {LogText {}}} {
   variable Connection
 
   if {[string equal "$DeleteCard" {}]} {
-    set DeleteCard [$Connection statement {delete from cards where key = ?}]
+    set DeleteCard [$Connection statement [Database::gensym stmt] \
+		{delete from cards where key = ?} {CHAR}]
   }
   set res [catch {$DeleteCard run [list [string toupper "$key"]]} error]
   if {![string equal "$LogText" {}]} {

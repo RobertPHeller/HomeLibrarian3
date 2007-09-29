@@ -1,17 +1,14 @@
 #* 
 #* ------------------------------------------------------------------
-#* Makefile.am - Build scripts
-#* Created by Robert Heller on Tue Nov  1 15:49:21 2005
+#* AddKitDir.tcl - Add a symlinked directory to a kit
+#* Created by Robert Heller on Wed Jan 10 14:27:14 2007
 #* ------------------------------------------------------------------
 #* Modification History: $Log$
-#* Modification History: Revision 1.2  2007/09/29 14:17:57  heller
+#* Modification History: Revision 1.1  2007/09/29 14:17:56  heller
 #* Modification History: 3.0b1 Lockdown
 #* Modification History:
-#* Modification History: Revision 1.2  2007/02/01 20:00:51  heller
+#* Modification History: Revision 1.1  2007/02/01 20:00:51  heller
 #* Modification History: Lock down for Release 2.1.7
-#* Modification History:
-#* Modification History: Revision 1.1  2005/11/04 19:06:33  heller
-#* Modification History: Nov 4, 2005 Lockdown
 #* Modification History:
 #* Modification History: Revision 1.1  2002/07/28 14:03:50  heller
 #* Modification History: Add it copyright notice headers
@@ -39,9 +36,31 @@
 #*     along with this program; if not, write to the Free Software
 #*     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #* 
-#* $Id$ 
+#*  
 #* 
-EXTRA_DIST = HelpIndexBuild.tcl IndexHH.tcl \
-	HelpIndexBuild.kit IndexHH.kit \
-	AddKitDir.kit AddKitDir.tcl AddKitFile.kit AddKitFile.tcl \
-	MakePkgIndex.kit MakePkgIndex.tcl
+
+package provide app-AddKitDir 1.0
+
+
+#*************************
+# command line arguments: <kit name> <Subdirectory Path> <Directory Path>
+#*************************
+
+if {$argc != 3} {
+  puts stderr "usage: [file rootname [file tail [info script]]].kit <kit name>  <Subdirectory Path> <Directory Path>"
+  exit 99
+}
+
+set KitName [lindex $argv 0]
+set rootname [file rootname $KitName]
+set TopDir $rootname.vfs
+
+set SubdirectoryPath [lindex $argv 1]
+set Subdirectory  [file join $TopDir $SubdirectoryPath]
+file mkdir $Subdirectory
+
+set DirectoryPath [lindex $argv 2]
+file link [file join $Subdirectory [file tail $DirectoryPath]] [file normalize $DirectoryPath]
+
+
+

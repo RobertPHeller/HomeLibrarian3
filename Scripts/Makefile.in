@@ -13,8 +13,6 @@
 # PARTICULAR PURPOSE.
 
 @SET_MAKE@
-
-
 srcdir = @srcdir@
 top_srcdir = @top_srcdir@
 VPATH = @srcdir@
@@ -42,19 +40,9 @@ am__aclocal_m4_deps = $(top_srcdir)/tcl.m4 $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
-am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(scriptlibdir)"
-binSCRIPT_INSTALL = $(INSTALL_SCRIPT)
-SCRIPTS = $(bin_SCRIPTS)
+CONFIG_CLEAN_FILES =
 SOURCES =
 DIST_SOURCES =
-am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
-am__vpath_adj = case $$p in \
-    $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
-    *) f=$$p;; \
-  esac;
-am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
-scriptlibDATA_INSTALL = $(INSTALL_DATA)
-DATA = $(scriptlib_DATA)
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
@@ -100,11 +88,12 @@ PKG_STUB_LIB_FILE = @PKG_STUB_LIB_FILE@
 PKG_STUB_OBJECTS = @PKG_STUB_OBJECTS@
 PKG_STUB_SOURCES = @PKG_STUB_SOURCES@
 PKG_TCL_SOURCES = @PKG_TCL_SOURCES@
+SDX = @SDX@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
-SNITLIB = @SNITLIB@
 STRIP = @STRIP@
-TCLODBCLIB = @TCLODBCLIB@
+TCLKIT = @TCLKIT@
+TCLKITRUN = @TCLKITRUN@
 TCLSH_PROG = @TCLSH_PROG@
 TCLXMLLIB = @TCLXMLLIB@
 TCL_BIN_DIR = @TCL_BIN_DIR@
@@ -133,6 +122,7 @@ TK_STUB_LIB_SPEC = @TK_STUB_LIB_SPEC@
 TK_VERSION = @TK_VERSION@
 TK_XINCLUDES = @TK_XINCLUDES@
 TOP_DIR = @TOP_DIR@
+URILIB = @URILIB@
 VERSION = @VERSION@
 WISH_PROG = @WISH_PROG@
 ac_ct_STRIP = @ac_ct_STRIP@
@@ -159,10 +149,6 @@ sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
-scriptlibdir = $(datadir)/$(PACKAGE)-$(VERSION)/scriptlib
-imagelibdir = $(datadir)/$(PACKAGE)-$(VERSION)/imagelib
-docdir = $(datadir)/$(PACKAGE)-$(VERSION)/documentation
-helpdir = $(datadir)/$(PACKAGE)-$(VERSION)/Help
 LibraryScripts = BWHelp.tcl labelselectcolor.tcl panedw.tcl fileentry.tcl \
                  labelspinbox.tcl splash.tcl labelcombobox.tcl mainwindow.tcl \
                  BWStdMenuBar.tcl AnimatedHeader.tcl SearchWindow.tcl \
@@ -170,9 +156,6 @@ LibraryScripts = BWHelp.tcl labelselectcolor.tcl panedw.tcl fileentry.tcl \
 		 PrintFunctions.tcl ImportV1Ascii.tcl ImportV2Ascii.tcl
 
 EXTRA_DIST = $(LibraryScripts) HL3.src
-scriptlib_DATA = $(LibraryScripts) pkgIndex.tcl
-bin_SCRIPTS = HL3
-CONFIG_CLEAN_FILES = HL3
 all: all-am
 
 .SUFFIXES:
@@ -205,43 +188,7 @@ $(top_srcdir)/configure:  $(am__configure_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
-install-binSCRIPTS: $(bin_SCRIPTS)
-	@$(NORMAL_INSTALL)
-	test -z "$(bindir)" || $(mkdir_p) "$(DESTDIR)$(bindir)"
-	@list='$(bin_SCRIPTS)'; for p in $$list; do \
-	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  if test -f $$d$$p; then \
-	    f=`echo "$$p" | sed 's|^.*/||;$(transform)'`; \
-	    echo " $(binSCRIPT_INSTALL) '$$d$$p' '$(DESTDIR)$(bindir)/$$f'"; \
-	    $(binSCRIPT_INSTALL) "$$d$$p" "$(DESTDIR)$(bindir)/$$f"; \
-	  else :; fi; \
-	done
-
-uninstall-binSCRIPTS:
-	@$(NORMAL_UNINSTALL)
-	@list='$(bin_SCRIPTS)'; for p in $$list; do \
-	  f=`echo "$$p" | sed 's|^.*/||;$(transform)'`; \
-	  echo " rm -f '$(DESTDIR)$(bindir)/$$f'"; \
-	  rm -f "$(DESTDIR)$(bindir)/$$f"; \
-	done
 uninstall-info-am:
-install-scriptlibDATA: $(scriptlib_DATA)
-	@$(NORMAL_INSTALL)
-	test -z "$(scriptlibdir)" || $(mkdir_p) "$(DESTDIR)$(scriptlibdir)"
-	@list='$(scriptlib_DATA)'; for p in $$list; do \
-	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  f=$(am__strip_dir) \
-	  echo " $(scriptlibDATA_INSTALL) '$$d$$p' '$(DESTDIR)$(scriptlibdir)/$$f'"; \
-	  $(scriptlibDATA_INSTALL) "$$d$$p" "$(DESTDIR)$(scriptlibdir)/$$f"; \
-	done
-
-uninstall-scriptlibDATA:
-	@$(NORMAL_UNINSTALL)
-	@list='$(scriptlib_DATA)'; for p in $$list; do \
-	  f=$(am__strip_dir) \
-	  echo " rm -f '$(DESTDIR)$(scriptlibdir)/$$f'"; \
-	  rm -f "$(DESTDIR)$(scriptlibdir)/$$f"; \
-	done
 tags: TAGS
 TAGS:
 
@@ -278,11 +225,8 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-am
-all-am: Makefile $(SCRIPTS) $(DATA)
+all-am: Makefile
 installdirs:
-	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(scriptlibdir)"; do \
-	  test -z "$$dir" || $(mkdir_p) "$$dir"; \
-	done
 install: install-am
 install-exec: install-exec-am
 install-data: install-data-am
@@ -325,9 +269,9 @@ info: info-am
 
 info-am:
 
-install-data-am: install-scriptlibDATA
+install-data-am:
 
-install-exec-am: install-binSCRIPTS
+install-exec-am:
 
 install-info: install-info-am
 
@@ -351,29 +295,17 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-binSCRIPTS uninstall-info-am \
-	uninstall-scriptlibDATA
+uninstall-am: uninstall-info-am
 
 .PHONY: all all-am check check-am clean clean-generic distclean \
 	distclean-generic distdir dvi dvi-am html html-am info info-am \
-	install install-am install-binSCRIPTS install-data \
-	install-data-am install-exec install-exec-am install-info \
-	install-info-am install-man install-scriptlibDATA \
+	install install-am install-data install-data-am install-exec \
+	install-exec-am install-info install-info-am install-man \
 	install-strip installcheck installcheck-am installdirs \
 	maintainer-clean maintainer-clean-generic mostlyclean \
 	mostlyclean-generic pdf pdf-am ps ps-am uninstall uninstall-am \
-	uninstall-binSCRIPTS uninstall-info-am uninstall-scriptlibDATA
+	uninstall-info-am
 
-
-pkgIndex.tcl : $(LibraryScripts)
-	echo "pkg_mkIndex . $(LibraryScripts)" | $(TCLSH_PROG)
-HL3 : HL3.src
-	sed -f $(top_srcdir)/config_tcl <$< >$@
-	chmod +x $@
-
-$(top_builddir)/config_tcl.sed: $(top_builddir)/config.status \
-				$(top_builddir)/config_tcl.sed.in
-	cd $(top_builddir) && CONFIG_FILES=$(@F) CONFIG_HEADERS= $(SHELL) ./config.status
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

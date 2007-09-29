@@ -4,8 +4,11 @@
 #* Created by Robert Heller on Sat Sep 16 16:38:46 2006
 #* ------------------------------------------------------------------
 #* Modification History: $Log$
-#* Modification History: Revision 1.1  2006/11/02 19:55:53  heller
-#* Modification History: Initial revision
+#* Modification History: Revision 1.2  2007/09/29 14:17:57  heller
+#* Modification History: 3.0b1 Lockdown
+#* Modification History:
+#* Modification History: Revision 1.1.1.1  2006/11/02 19:55:53  heller
+#* Modification History: Imported Sources
 #* Modification History:
 #* Modification History: Revision 1.1  2002/07/28 14:03:50  heller
 #* Modification History: Add it copyright notice headers
@@ -253,7 +256,7 @@ namespace eval ImportV2Ascii {
 	set buffer "[$self _GetBuffer]"
 	if {[llength $buffer] == 1} {set buffer [lindex $buffer 0]}
 	set keyword "[lindex $buffer 0]"
-	Database::InsertKeysForKeyword "$keyword" [lrange $buffer 1 end]
+	Database::InsertKeywordsForKey "$keyword" [lrange $buffer 1 end]
 	update
       }
       return [list $numcards $numsubjects]

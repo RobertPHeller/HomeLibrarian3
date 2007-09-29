@@ -4,8 +4,11 @@
 #* Created by Robert Heller on Wed Sep 13 19:21:00 2006
 #* ------------------------------------------------------------------
 #* Modification History: $Log$
-#* Modification History: Revision 1.1  2006/11/02 19:55:53  heller
-#* Modification History: Initial revision
+#* Modification History: Revision 1.2  2007/09/29 14:17:57  heller
+#* Modification History: 3.0b1 Lockdown
+#* Modification History:
+#* Modification History: Revision 1.1.1.1  2006/11/02 19:55:53  heller
+#* Modification History: Imported Sources
 #* Modification History:
 #* Modification History: Revision 1.1  2002/07/28 14:03:50  heller
 #* Modification History: Add it copyright notice headers
@@ -461,29 +464,32 @@ namespace eval AmazonECommerce {
 	Foreword -
 	Contributor -
 	Author {
-	   set authorSoFar "[$authorLE cget -text]"
-	   if {[string equal "$authorSoFar" {}]} {
-	     $authorLE configure -text "$value ($name)"
-	   } else {
-	     $authorLE configure -text "$authorSoFar, $value ($name)"
-	   }
+	  set authorSoFar "[$authorLE cget -text]"
+	  if {[string equal "$authorSoFar" {}]} {
+	    $authorLE configure -text "$value ($name)"
+	  } else {
+	    $authorLE configure -text "$authorSoFar, $value ($name)"
+	  }
+	  $hull configure -title "[$authorLE cget -text]: [$titleLE cget -text]"
 	}
 	Creator {
-	   set authorSoFar "[$authorLE cget -text]"
-	   set roleI [expr {[lsearch -regexp $attlist {[rR]ole}] + 1}]
-	   if {$roleI > 0} {
-	     append value " ([lindex $attlist $roleI])"
-	   }
-	   if {[string equal "$authorSoFar" {}]} {
-	     $authorLE configure -text "$value"
-	   } else {
-	     $authorLE configure -text "$authorSoFar, $value"
-	   }
+	  set authorSoFar "[$authorLE cget -text]"
+	  set roleI [expr {[lsearch -regexp $attlist {[rR]ole}] + 1}]
+	  if {$roleI > 0} {
+	    append value " ([lindex $attlist $roleI])"
+	  }
+	  if {[string equal "$authorSoFar" {}]} {
+	    $authorLE configure -text "$value"
+	  } else {
+	    $authorLE configure -text "$authorSoFar, $value"
+	  }
+	  $hull configure -title "[$authorLE cget -text]: [$titleLE cget -text]"
 	}
 	Title {
 	  set titleSoFar "[$titleLE cget -text]"
 	  if {[string equal "$titleSoFar" {}]} {
 	    $titleLE         configure -text "$value"
+	    $hull configure -title "[$authorLE cget -text]: [$titleLE cget -text]"
 	  }
 	}
 	ReleaseDate -
@@ -517,6 +523,29 @@ namespace eval AmazonECommerce {
 	    $mediaLE         configure -text "$mediaSoFar, $value"
 	  }
 	}
+	ListPrice -
+	ItemLookupResponse -
+	ItemLookupRequest -
+	Offers -
+	OperationRequest -
+	HTTPHeaders -
+	Header -
+	HTTPHeaders -
+	Arguments -
+	Argument -
+	Items -
+	Request -
+	Item -
+	ItemAttributes -
+	OfferSummary -
+	LowestNewPrice -
+	LowestUsedPrice -
+	LowestCollectiblePrice -
+	BrowseNodes -
+	BrowseNode -
+	Ancestors -
+	ListmaniaLists  -
+	ListmaniaList  -
 	RequestId -
 	RequestProcessingTime  -
 	IsValid -

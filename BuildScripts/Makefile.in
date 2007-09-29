@@ -88,11 +88,12 @@ PKG_STUB_LIB_FILE = @PKG_STUB_LIB_FILE@
 PKG_STUB_OBJECTS = @PKG_STUB_OBJECTS@
 PKG_STUB_SOURCES = @PKG_STUB_SOURCES@
 PKG_TCL_SOURCES = @PKG_TCL_SOURCES@
+SDX = @SDX@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
-SNITLIB = @SNITLIB@
 STRIP = @STRIP@
-TCLODBCLIB = @TCLODBCLIB@
+TCLKIT = @TCLKIT@
+TCLKITRUN = @TCLKITRUN@
 TCLSH_PROG = @TCLSH_PROG@
 TCLXMLLIB = @TCLXMLLIB@
 TCL_BIN_DIR = @TCL_BIN_DIR@
@@ -121,6 +122,7 @@ TK_STUB_LIB_SPEC = @TK_STUB_LIB_SPEC@
 TK_VERSION = @TK_VERSION@
 TK_XINCLUDES = @TK_XINCLUDES@
 TOP_DIR = @TOP_DIR@
+URILIB = @URILIB@
 VERSION = @VERSION@
 WISH_PROG = @WISH_PROG@
 ac_ct_STRIP = @ac_ct_STRIP@
@@ -147,7 +149,55 @@ sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
-EXTRA_DIST = HelpIndexBuild.tcl  IndexHH.tcl
+
+#* 
+#* ------------------------------------------------------------------
+#* Makefile.am - Build scripts
+#* Created by Robert Heller on Tue Nov  1 15:49:21 2005
+#* ------------------------------------------------------------------
+#* Modification History: $Log$
+#* Modification History: Revision 1.2  2007/09/29 14:17:57  heller
+#* Modification History: 3.0b1 Lockdown
+#* Modification History:
+#* Modification History: Revision 1.2  2007/02/01 20:00:51  heller
+#* Modification History: Lock down for Release 2.1.7
+#* Modification History:
+#* Modification History: Revision 1.1  2005/11/04 19:06:33  heller
+#* Modification History: Nov 4, 2005 Lockdown
+#* Modification History:
+#* Modification History: Revision 1.1  2002/07/28 14:03:50  heller
+#* Modification History: Add it copyright notice headers
+#* Modification History:
+#* ------------------------------------------------------------------
+#* Contents:
+#* ------------------------------------------------------------------
+#*  
+#*     Model RR System, Version 2
+#*     Copyright (C) 1994,1995,2002-2005  Robert Heller D/B/A Deepwoods Software
+#* 			51 Locke Hill Road
+#* 			Wendell, MA 01379-9728
+#* 
+#*     This program is free software; you can redistribute it and/or modify
+#*     it under the terms of the GNU General Public License as published by
+#*     the Free Software Foundation; either version 2 of the License, or
+#*     (at your option) any later version.
+#* 
+#*     This program is distributed in the hope that it will be useful,
+#*     but WITHOUT ANY WARRANTY; without even the implied warranty of
+#*     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#*     GNU General Public License for more details.
+#* 
+#*     You should have received a copy of the GNU General Public License
+#*     along with this program; if not, write to the Free Software
+#*     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+#* 
+#* $Id$ 
+#* 
+EXTRA_DIST = HelpIndexBuild.tcl IndexHH.tcl \
+	HelpIndexBuild.kit IndexHH.kit \
+	AddKitDir.kit AddKitDir.tcl AddKitFile.kit AddKitFile.tcl \
+	MakePkgIndex.kit MakePkgIndex.tcl
+
 all: all-am
 
 .SUFFIXES:

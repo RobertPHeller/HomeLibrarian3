@@ -7,8 +7,8 @@
 #* ------------------------------------------------------------------
 #* Modification History: 
 #* $Log$
-#* Revision 1.1  2006/11/02 19:55:54  heller
-#* Initial revision
+#* Revision 1.2  2007/09/29 14:17:56  heller
+#* 3.0b1 Lockdown
 #*
 #* Revision 1.1  2005/11/04 19:06:33  heller
 #* Nov 4, 2005 Lockdown
@@ -69,20 +69,15 @@ for {set i 1} {$i < $argc} {incr i} {
   while {[gets $hfp line] >= 0} {
     global HLinePattern
     if {[regexp "$HLinePattern" "$line" whole level heading] > 0} {
-#      puts stderr "*** $line => $level $heading"
-#      puts stderr "*** llength '$prefixList' = [llength $prefixList]"
-      if {$level <= [llength $prefixList]} {
+      if {$level < [llength $prefixList]} {
 	if {$level == 0} {
 	  set prefixList {}
         } else {
-	  set prefixList [lrange $prefixList 0 [expr $level - 2]]
+	  set prefixList [lrange $prefixList 0 [expr $level -1]]
 	}
-      }	
-      set hlist $prefixList
-      lappend hlist "$heading"
-#      puts stderr "*** hlist = $hlist"
-      puts $indexfp [list [join $hlist {>}] [list $file $pos]]
-      set prefixList $hlist
+      }
+      lappend prefixList "$heading"
+      puts $indexfp [list [join $prefixList {>}] [list $file $pos]]
     }
     set pos [tell $hfp]
   }
