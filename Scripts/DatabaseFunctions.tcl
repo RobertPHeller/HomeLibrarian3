@@ -4,7 +4,7 @@
 #* Created by Robert Heller on Mon Sep 11 21:46:41 2006
 #* ------------------------------------------------------------------
 #* Modification History: $Log$
-#* Modification History: Revision 1.3  2007/09/29 15:37:41  heller
+#* Modification History: Revision 1.4  2007/09/29 15:54:57  heller
 #* Modification History: 3.0b1 Lockdown
 #* Modification History:
 #* Modification History: Revision 1.2  2007/09/29 14:17:57  heller
@@ -257,28 +257,26 @@ proc Database::ConnectToDatabase {} {
   variable Environment
   set ConnectionString [option get . connectionString ConnectionString]
   set Environment database
-  while {1} {
-#    puts stderr "*** Database::ConnectToDatabase (top of while loop): ConnectionString = '$ConnectionString'"
-    if {[string equal "$ConnectionString" {}]} {
-      Windows::HideSplash {
-        set ConnectionString [GetConnectionString $Environment]
-      }
+  Windows::HideSplash {
+    while {1} {
+#      puts stderr "*** Database::ConnectToDatabase (top of while loop): ConnectionString = '$ConnectionString'"
       if {[string equal "$ConnectionString" {}]} {
-        Windows::Exit yes
+        set ConnectionString [GetConnectionString $Environment]
+        if {[string equal "$ConnectionString" {}]} {
+          Windows::Exit yes
+        }
       }
-    }
-    set connCmd [list $Environment connect [gensym conn] "$ConnectionString"]
-    if {[catch "$connCmd" Connection]} {
-      global errorInfo
-#      puts stderr "*** Database::ConnectToDatabase: $Connection: $errorInfo"
-      tk_messageBox -type ok -icon error -message "$Connection"
-      set Connection {}
-      set ConnectionString {}
-      continue
-    }
-#    puts stderr "*** Database::ConnectToDatabase: Connection = '$Connection'"
-    if {![HaveData]} {
-      Windows::HideSplash {
+      set connCmd [list $Environment connect [gensym conn] "$ConnectionString"]
+      if {[catch "$connCmd" Connection]} {
+        global errorInfo
+#        puts stderr "*** Database::ConnectToDatabase: $Connection: $errorInfo"
+        tk_messageBox -type ok -icon error -message "$Connection"
+        set Connection {}
+        set ConnectionString {}
+        continue
+      }
+#      puts stderr "*** Database::ConnectToDatabase: Connection = '$Connection'"
+      if {![HaveData]} {
 	if {[AskCreateTables]} {
 	  New 1
 	} else {
@@ -287,16 +285,16 @@ proc Database::ConnectToDatabase {} {
 	  set ConnectionString {}
 	  continue
 	}
+      } else {
+        break
       }
-    } else {
-      break
     }
-  }
-#  puts stderr "*** Database::ConnectToDatabase (after while): ConnectionString = '$ConnectionString', Connection = '$Connection'"
-  if {![HaveData]} {
-    tk_messageBox -type ok -icon error \
+#    puts stderr "*** Database::ConnectToDatabase (after while): ConnectionString = '$ConnectionString', Connection = '$Connection'"
+    if {![HaveData]} {
+      tk_messageBox -type ok -icon error \
 	-message "Could not make a connection to a database server, sorry!"
-    Windows::Exit yes
+      Windows::Exit yes
+    }
   }
 }
 
