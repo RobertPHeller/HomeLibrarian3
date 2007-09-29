@@ -4,6 +4,9 @@
 #* Created by Robert Heller on Mon Sep 11 21:46:41 2006
 #* ------------------------------------------------------------------
 #* Modification History: $Log$
+#* Modification History: Revision 1.3  2007/09/29 15:37:41  heller
+#* Modification History: 3.0b1 Lockdown
+#* Modification History:
 #* Modification History: Revision 1.2  2007/09/29 14:17:57  heller
 #* Modification History: 3.0b1 Lockdown
 #* Modification History:
@@ -229,6 +232,7 @@ proc Database::CheckFields {dataArray} {
       return 0
     }
   }
+  return 1
 }
 
 
