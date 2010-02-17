@@ -3,9 +3,9 @@
 #* PrintFunctions.tcl - Print Functions
 #* Created by Robert Heller on Mon Sep 18 08:48:59 2006
 #* ------------------------------------------------------------------
-#* Modification History: $Log$
-#* Modification History: Revision 1.1  2006/11/02 19:55:53  heller
-#* Modification History: Initial revision
+#* Modification History: $Log: PrintFunctions.tcl,v $
+#* Modification History: Revision 1.1.1.1  2006/11/02 19:55:53  heller
+#* Modification History: Imported Sources
 #* Modification History:
 #* Modification History: Revision 1.1  2002/07/28 14:03:50  heller
 #* Modification History: Add it copyright notice headers
@@ -58,6 +58,7 @@ namespace eval Print {
   }
   snit::macro SelectPrintDialog_typeconstructor {dpath body} {
     regsub -all {%dpath%} {
+      if {"$dialog" ne "" && [winfo exists $dialog]} {return}
       set dialog [Dialog::create %dpath% \
 			-class SelectPrinterDialog -side bottom \
 			-bitmap questhead -modal local \
@@ -95,7 +96,12 @@ namespace eval Print {
       %body%
     } "$dpath" tconsbody
     regsub -all {%body%} "$tconsbody" "$body" tconsbody
-    typeconstructor $tconsbody
+    typeconstructor {
+      set dialog {}
+    }
+    typemethod _createdialog {} {
+      $tconsbody
+    }
   }
   snit::macro SelectPrintDialog_typemethods {drawbody} {
     typemethod _OK {} {
@@ -128,6 +134,7 @@ namespace eval Print {
       }
     }
     regsub -all {%drawbody%} {
+      $type _createdialog
       $dialog configure -parent [from args -parent .]
       set printers {}
       set defprinter {}

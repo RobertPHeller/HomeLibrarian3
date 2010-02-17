@@ -3,7 +3,7 @@
 #* Makefile.am - Build scripts
 #* Created by Robert Heller on Tue Nov  1 15:49:21 2005
 #* ------------------------------------------------------------------
-#* Modification History: $Log$
+#* Modification History: $Log: Makefile.am,v $
 #* Modification History: Revision 1.2  2007/09/29 14:17:57  heller
 #* Modification History: 3.0b1 Lockdown
 #* Modification History:

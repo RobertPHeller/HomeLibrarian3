@@ -3,7 +3,7 @@
 #* DatabaseFunctions.tcl - Database functions
 #* Created by Robert Heller on Mon Sep 11 21:46:41 2006
 #* ------------------------------------------------------------------
-#* Modification History: $Log$
+#* Modification History: $Log: DatabaseFunctions.tcl,v $
 #* Modification History: Revision 1.4  2007/09/29 15:54:57  heller
 #* Modification History: 3.0b1 Lockdown
 #* Modification History:
@@ -109,6 +109,10 @@ Create Table Keywords (
     typecomponent saveIniLabCB
     typecomponent connectionstringEntry
     typeconstructor {
+      set dialog {}
+    }
+    typemethod _createdialog {} {
+      if {"$dialog" ne "" && [winfo exists $dialog]} {return}
       set dialog [Dialog::create .getConnectionStringDialog \
 			-side bottom -bitmap questhead \
 			-modal local -title "Get Connection String" \
@@ -197,6 +201,20 @@ Create Table Keywords (
       close $fp
     }
     typemethod draw {args} {
+      if {"$::tcl_platform(platform)" eq "windows"} {
+	set state [wm state .]
+	wm deiconify .
+	update
+      }
+      $type _createdialog
+      if {"$::tcl_platform(platform)" eq "windows"} {
+        update
+	switch $state {
+	  iconic    {wm iconify  .}
+	  withdrawn {wm withdraw .}
+	}
+	update
+      }
       set environment [from args -evironment {}]
       if {[string length "$environment"] == 0} {
 	return {}

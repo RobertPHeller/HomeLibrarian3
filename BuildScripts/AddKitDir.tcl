@@ -3,7 +3,7 @@
 #* AddKitDir.tcl - Add a symlinked directory to a kit
 #* Created by Robert Heller on Wed Jan 10 14:27:14 2007
 #* ------------------------------------------------------------------
-#* Modification History: $Log$
+#* Modification History: $Log: AddKitDir.tcl,v $
 #* Modification History: Revision 1.1  2007/09/29 14:17:56  heller
 #* Modification History: 3.0b1 Lockdown
 #* Modification History:

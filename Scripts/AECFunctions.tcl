@@ -3,7 +3,7 @@
 #* AECFunctions.tcl - Amazon E-Commerce Functions
 #* Created by Robert Heller on Wed Sep 13 19:21:00 2006
 #* ------------------------------------------------------------------
-#* Modification History: $Log$
+#* Modification History: $Log: AECFunctions.tcl,v $
 #* Modification History: Revision 1.2  2007/09/29 14:17:57  heller
 #* Modification History: 3.0b1 Lockdown
 #* Modification History:

@@ -28,11 +28,11 @@ Version.hh : $(top_srcdir)/configure
 	echo 'See <Copying> for complete copyright information.'  >>Version.hh
 
 $(HelpIndex): $(HelpFiles) $(GeneratedHelpFiles)
-	$(TCLSH_PROG) $(HelpIndexBuilder) $(HelpIndex) $(HelpFiles) \
+	$(HOSTTCLSH) $(HelpIndexBuilder) $(HelpIndex) $(HelpFiles) \
 		$(GeneratedHelpFiles)
 
 $(IndexHH) : $(HelpIndex) $(HelpFiles) $(GeneratedHelpFiles)
-	$(TCLSH_PROG) $(IndexHHBuilder) $(HelpIndex) $(IndexHH) $(HelpFiles) \
+	$(HOSTTCLSH) $(IndexHHBuilder) $(HelpIndex) $(IndexHH) $(HelpFiles) \
 		$(GeneratedHelpFiles)
 
 $(top_srcdir)/configure: $(top_srcdir)/configure.ac

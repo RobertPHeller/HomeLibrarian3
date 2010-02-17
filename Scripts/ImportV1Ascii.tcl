@@ -3,7 +3,7 @@
 #* ImportV1Ascii.tcl - Import V1 Ascii
 #* Created by Robert Heller on Sat Sep 30 13:12:56 2006
 #* ------------------------------------------------------------------
-#* Modification History: $Log$
+#* Modification History: $Log: ImportV1Ascii.tcl,v $
 #* Modification History: Revision 1.2  2007/09/29 14:17:57  heller
 #* Modification History: 3.0b1 Lockdown
 #* Modification History:

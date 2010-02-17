@@ -3,9 +3,9 @@
 #* BWStdMenuBar.tcl - BWidget version of StdMenuBar
 #* Created by Robert Heller on Sun Feb  5 14:36:04 2006
 #* ------------------------------------------------------------------
-#* Modification History: $Log$
-#* Modification History: Revision 1.1  2006/11/02 19:55:53  heller
-#* Modification History: Initial revision
+#* Modification History: $Log: BWStdMenuBar.tcl,v $
+#* Modification History: Revision 1.1.1.1  2006/11/02 19:55:53  heller
+#* Modification History: Imported Sources
 #* Modification History:
 #* Modification History: Revision 1.1  2006/06/02 02:39:48  heller
 #* Modification History: Mostly Done!

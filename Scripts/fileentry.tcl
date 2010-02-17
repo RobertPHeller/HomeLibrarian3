@@ -5,9 +5,9 @@
 #* fileentry.tcl - File Entry Widget
 #* Created by Robert Heller on Wed Feb 15 19:19:24 2006
 #* ------------------------------------------------------------------
-#* Modification History: $Log$
-#* Modification History: Revision 1.1  2006/11/02 19:55:53  heller
-#* Modification History: Initial revision
+#* Modification History: $Log: fileentry.tcl,v $
+#* Modification History: Revision 1.1.1.1  2006/11/02 19:55:53  heller
+#* Modification History: Imported Sources
 #* Modification History:
 #* Modification History: Revision 1.1  2006/06/02 02:39:49  heller
 #* Modification History: Mostly Done!

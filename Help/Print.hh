@@ -3,9 +3,9 @@
 #* Print.hh - Print dialog help
 #* Created by Robert Heller on Mon Oct  2 17:31:15 2006
 #* ------------------------------------------------------------------
-#* Modification History: $Log$
-#* Modification History: Revision 1.1  2006/11/02 19:55:54  heller
-#* Modification History: Initial revision
+#* Modification History: $Log: Print.hh,v $
+#* Modification History: Revision 1.1.1.1  2006/11/02 19:55:54  heller
+#* Modification History: Imported Sources
 #* Modification History:
 #* Modification History: Revision 1.1  2002/07/28 14:03:50  heller
 #* Modification History: Add it copyright notice headers

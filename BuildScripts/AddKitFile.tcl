@@ -3,7 +3,7 @@
 #* AddKitFile.tcl - Add kit files (symlinked) to a kit lib dir
 #* Created by Robert Heller on Wed Jan 10 14:19:51 2007
 #* ------------------------------------------------------------------
-#* Modification History: $Log$
+#* Modification History: $Log: AddKitFile.tcl,v $
 #* Modification History: Revision 1.1  2007/09/29 14:17:56  heller
 #* Modification History: 3.0b1 Lockdown
 #* Modification History:

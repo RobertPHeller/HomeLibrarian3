@@ -1,4 +1,4 @@
-AC_INIT(HomeLibrarian,3.0b1)
+AC_INIT(HomeLibrarian,3.0b2)
 AC_CONFIG_SRCDIR(Scripts/HL3.src)
 AM_INIT_AUTOMAKE
 
@@ -18,24 +18,21 @@ TOP_DIR=${BUILD_DIR}
 AC_SUBST(TOP_DIR)
 AC_SUBST(BUILD_DIR)
 
-TEA_INIT([3.5])
-TEA_PATH_TCLCONFIG
-TEA_LOAD_TCLCONFIG
-TEA_PATH_TKCONFIG
-TEA_LOAD_TKCONFIG
-TEA_PROG_TCLSH
-TEA_PROG_WISH
 
 AC_PATH_PROG(PDFLATEX,pdflatex,/bin/true)
 AC_CHECK_PROGS(HTLATEX,[htlatex htlatex.sh])
 AC_SUBST(HTLATEX)
 AC_PATH_PROG(MAKEINDEX,makeindex,/bin/true)
 AC_PATH_PROG(BIBTEX,bibtex,/bin/true)
-TCL_LIBRARY=`echo 'puts $tcl_library'|${TCLSH_PROG}`
-TCL_AUTO_PATH="${TCL_LIBRARY} ${TCL_PACKAGE_PATH}"
+AC_PATH_PROGS(SDX,[sdx.kit sdx])
+AC_PATH_PROGS(TCLKIT,tclkit)
+AC_PATH_PROGS(HOSTTCLSH,[tclsh8.4 tclsh])
+
+TCL_LIBRARY=`echo 'puts $tcl_library'|${HOSTTCLSH}`
+TCL_AUTO_PATH=`echo 'puts $auto_path'|${HOSTTCLSH}`
 
 AC_MSG_CHECKING(bwidget dir)
-BWLIB=`echo 'puts $tcl_library'|${TCLSH}`
+BWLIB=`echo 'puts $tcl_library'|${HOSTTCLSH}`
 dirs=${TCL_AUTO_PATH}
 for i in $dirs ; do 
   subdirs="$i/bwidget* $i/tcllib*/bwidget*"
@@ -131,8 +128,6 @@ else
 fi
 AC_SUBST(TCLXMLLIB)
 
-AC_PATH_PROGS(SDX,sdx.kit sdx)
-AC_PATH_PROGS(TCLKIT,tclkit)
 TCLKITRUN="${TCL_EXEC_PREFIX}/bin/tclkit$EXEEXT"
 AC_ARG_WITH(tclkitrun, [  --with-tclkitrun=filename     use tclkit runtime in fi
 lename], TCLKITRUN=$withval,)

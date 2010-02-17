@@ -20,6 +20,8 @@ image create photo Windows::DeepwoodsBanner -file [file join "$imageDir" Deepwoo
 image create photo Windows::FaceFrontSmall -file [file join "$imageDir" ffrontSmall.gif]
 image create photo Windows::FaceProfileSmall -file [file join "$imageDir" fsideSmall.gif]
 
+#catch {console show}
+#if {"$::tcl_platform(platform)" ne "windows"} {wm withdraw .}
 wm withdraw .
 
 namespace eval Windows {
@@ -256,6 +258,10 @@ namespace eval Windows {
     typecomponent dialog
     typecomponent filenameFE
     typeconstructor {
+      set dialog {}
+    }
+    typemethod _createdialog {} {
+      if {"$dialog" ne {} && [winfo exists $dialog]} {return}
       set dialog [Dialog::create .importDialog \
 		    -class ImportDialog -side bottom -bitmap questhead \
 		    -modal local -title "Import Datafile" \
@@ -284,6 +290,7 @@ namespace eval Windows {
       return [$dialog enddialog cancel]
     }
     typemethod draw {} {
+      $type _createdialog
       set button [$dialog draw]
       return "$button"
     }

@@ -3,7 +3,7 @@
 #* EditWindow.tcl - Edit Window functions
 #* Created by Robert Heller on Wed Sep 13 19:01:31 2006
 #* ------------------------------------------------------------------
-#* Modification History: $Log$
+#* Modification History: $Log: EditWindow.tcl,v $
 #* Modification History: Revision 1.2  2007/09/29 14:17:57  heller
 #* Modification History: 3.0b1 Lockdown
 #* Modification History:
@@ -68,6 +68,10 @@ namespace eval Edit {
     typecomponent   templateFileB
     typecomponent   selectedTempLE
     typeconstructor {
+      set dialog {}
+    }
+    typemethod _createdialog {} {
+      if {"$dialog" ne "" && [winfo exists $dialog]} {return}
       set dialog [Dialog::create .selectATemplateDialog \
 			-class SelectATemplateDialog -side bottom \
 			-bitmap questhead -modal local \
@@ -134,6 +138,7 @@ namespace eval Edit {
       $type _OK
     }
     typemethod  selectATemplateDialog {args} {
+      $type _createdialog
       $templateListBox delete [$templateListBox items]
       foreach tp [$type listOfTemplates] {
 	$templateListBox insert end $tp -text "$tp" -data "$tp"
@@ -997,6 +1002,10 @@ namespace eval Edit {
     typecomponent newKeyLE
 
     typeconstructor {
+      set dialog {}
+    }
+    typemethod _createdialog {} {
+      if {"$dialog" ne "" && [winfo exists $dialog]} {return}
       set dialog [Dialog::create .getNewKeyDialog \
 			-class GetNewKeyDialog \
 			-side bottom -bitmap questhead \
@@ -1029,6 +1038,7 @@ namespace eval Edit {
       $dialog enddialog cancel
     }
     typemethod draw {args} {
+      $type _createdialog
       set button [$dialog draw]
       switch $button {
 	ok {return $_Result}
@@ -1046,6 +1056,10 @@ namespace eval Edit {
     typecomponent  templateLB
     typecomponent amazonSB 
     typeconstructor {
+      set dialog {}
+    }
+    typemethod _createdialog {} {
+      if {"$dialog" ne "" && [winfo exists $dialog]} {return}
       set dialog [Dialog::create .getNewCardTemplateOrAmazonURLDialog \
 			-class GetNewCardTemplateOrAmazonURLDialog \
 			-side bottom -bitmap questhead \
@@ -1086,6 +1100,7 @@ namespace eval Edit {
       $dialog enddialog cancel
     }
     typemethod draw {args} {
+      $type _createdialog
       set _SetURLScript "[from args -setURLProc {}]"
       set _SetTemplateScript "[from args -setTemplateProc {}]"
       # Init template list...

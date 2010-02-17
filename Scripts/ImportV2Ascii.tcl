@@ -3,7 +3,7 @@
 #* ImportV2Ascii.tcl - Import V2 Ascii Files
 #* Created by Robert Heller on Sat Sep 16 16:38:46 2006
 #* ------------------------------------------------------------------
-#* Modification History: $Log$
+#* Modification History: $Log: ImportV2Ascii.tcl,v $
 #* Modification History: Revision 1.2  2007/09/29 14:17:57  heller
 #* Modification History: 3.0b1 Lockdown
 #* Modification History:

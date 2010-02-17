@@ -6,7 +6,7 @@
 #* Created by Robert Heller on Tue Apr 20 00:56:13 1999
 #* ------------------------------------------------------------------
 #* Modification History: 
-#* $Log$
+#* $Log: HelpIndexBuild.tcl,v $
 #* Revision 1.2  2007/09/29 14:17:56  heller
 #* 3.0b1 Lockdown
 #*

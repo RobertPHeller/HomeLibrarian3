@@ -3,9 +3,9 @@
 #* Help.hh - Help on Help
 #* Created by Robert Heller on Tue Nov  1 15:57:56 2005
 #* ------------------------------------------------------------------
-#* Modification History: $Log$
-#* Modification History: Revision 1.1  2006/11/02 19:55:54  heller
-#* Modification History: Initial revision
+#* Modification History: $Log: Help.hh,v $
+#* Modification History: Revision 1.1.1.1  2006/11/02 19:55:54  heller
+#* Modification History: Imported Sources
 #* Modification History:
 #* Modification History: Revision 1.1  2005/11/04 19:06:36  heller
 #* Modification History: Nov 4, 2005 Lockdown
