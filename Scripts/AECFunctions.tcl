@@ -49,6 +49,9 @@ set xmlV [package require xml]
 
 namespace eval AmazonECommerce {
   variable BaseURL {http://webservices.amazon.com/onca/xml?Service=AWSECommerceService}
+  variable AWSHost {ecs.amazonaws.com}
+  variable AWSURL  {/onca/xml}
+  variable AWSService {AWSECommerceService}
   variable DWSAccessKeyID {0XD7CD0X6G5QAPH28A02}
   snit::widget AmazonSearch {
     widgetclass AmazonSearch
@@ -82,14 +85,28 @@ namespace eval AmazonECommerce {
       regsub -all {\?} $in "%3f" in
       return $in
     }
+    method _aws_sign_string {string_to_sign} {
+#      base64_encode(hash_hmac("sha256", $string_to_sign, $private_key, True));
+       
+    }
+      
     method _FormItemSearchRequest {searchIndex keywords} {
       set URL "$AmazonECommerce::BaseURL"
       set keywords [$self _URLEncode "$keywords"]
-      append URL "&AWSAccessKeyId=$AmazonECommerce::DWSAccessKeyID"
-      append URL "&Operation=ItemSearch"
-      append URL "&SearchIndex=$searchIndex"
-      append URL "&Keywords=$keywords"
-      append URL "&ResponseGroup=Small"
+      set params = [list Service=$AmazonECommerce::AWSService \
+			 Timestamp=[clock format [clock scan now] -format {%Y-%m-%dT%H:%i:%sZ} -gmt] \
+			 Version=2009-03-31]
+      lappend params "AWSAccessKeyId=$AmazonECommerce::DWSAccessKeyID"
+      lappend params "Operation=ItemSearch"
+      lappend params "SearchIndex=$searchIndex"
+      lappend params "Keywords=$keywords"
+      lappend params "ResponseGroup=Small"
+      set params [lsort $params]
+      set query [join $params {&}]
+      set string_to_sign "get\n$AmazonECommerce::AWSHost\n$AmazonECommerce::AWSURL\n$query"
+      set sig [$self _aws_sign_string $string_to_sign]
+      set URL "http://$AmazonECommerce::AWSHost$AmazonECommerce::AWSURL?$query&Signature=$sig"
+      puts "*** $self _FormItemSearchRequest: URL = $URL"
       return "$URL"
     }
     method _FormItemLookupRequest {itemid} {
@@ -98,6 +115,7 @@ namespace eval AmazonECommerce {
       append URL "&Operation=ItemLookup"
       append URL "&ItemId=$itemid"
       append URL "&ResponseGroup=Small"
+      puts "*** $self _FormItemLookupRequest: URL = $URL"
       return "$URL"
     }
     method viewItem {{parent .}} {

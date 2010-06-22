@@ -28,7 +28,7 @@ about. \\
 Description&TEXT&The description of the item.  This is unstructured text
 and can be whatever you want.\\
 Location&CHAR(36)&The location of the item. This is generally used to
-note the physical location of the item, such as a partitular book self
+note the physical location of the item, such as a particular book self
 or the fact that it is out on loan, etc.\\
 Category&CHAR(36)&The category of the item. Some user defined category.\\
 Media&CHAR(36)&The media the item is on. The type of media of the item,
@@ -47,10 +47,34 @@ ISBN&CHAR(20)&The ISBN of the item. If the item has one.\\
 \label{tab:ref:cardfields}
 \end{table}
 Each card contains thirteen (13) pieces of data as shown in
-Table~\ref{tab:ref:cardfields}. The keyword table consistes of two data
+Table~\ref{tab:ref:cardfields}. The keyword table consists of two data
 fields, a 64 character keyword and a 36 character card key.
 
-\section{Get Connection String Dialog}
+\section{Main GUI Window}
+
+
+
+
+The main window of the Home Librarian application, as shown in
+Figure~ref{fig:ref:MainWindow}, has a progress and status section at
+the top of the GUI\footnote{Below the attached menu bar.}, consisting
+of a ``face'' area and a progress and status area. The face area holds
+either a forward facing librarian image, when the GUI is idle and
+waiting for user input or a right profile when the application is
+working and not accepting input from the user. The status and progress
+either holds the message ``How May I Help You?'' or some sort of status
+message, usually detailing the number of matches found when searching,
+when the application is idle. When the application is working an
+animation of a card catalog drawer being opened and flipped through is
+displayed, as shown in Figure~ref{fig:ref:headerAnimation}.
+
+
+
+
+
+
+\section{Dialog Boxes}
+\subsection{Get Connection String Dialog}
 This dialog box creates the connection string needed to connect to the
 database via the ODBC API. The dialog shows lists of the available
 drivers and available datasources.  Either a datasource can be used
@@ -58,42 +82,42 @@ directly or a connection string can be created from an available
 driver. One of the possible configuration files can be used to store
 the connection string for future invocations of the Home Librarian
 program.
-\section{Select A Template Dialog}
+\subsection{Select A Template Dialog}
 This dialog box selects a template card.
-\section{Edit Template}
+\subsection{Edit Template}
 This window edits a template card.
-\section{Edit Card}
+\subsection{Edit Card}
 This window edits a card record.
-\section{Get New Key Dialog}
+\subsection{Get New Key Dialog}
 This dialog box gets a new key.
-\section{Get New Card Template Or Amazon URL Dialog}
+\subsection{Get New Card Template Or Amazon URL Dialog}
 This dialog selects either a template or gets data from Amazon to initialize 
 a new card.
-\section{Import Dialog}
+\subsection{Import Dialog}
 This dialog box selects a file and mode for data import.
-\section{Select Printer Dialog}
+\subsection{Select Printer Dialog}
 This dialog box is used to select a printer or Postscript output file.
 The print format and other output details are also selected with this
 dialog box.
-\section{Select A Layout Dialog}
+\subsection{Select A Layout Dialog}
 This dialog box selects a print layout, either from the layout cache or
 from a disk file.
-\section{Edit Layout Text Tool Dialog}
+\subsection{Edit Layout Text Tool Dialog}
 This tool dialog box is used to create a text item in a card layout.
-\section{Edit Layout Line Tool Dialog}
+\subsection{Edit Layout Line Tool Dialog}
 This tool dialog box is used to create a line item in a card layout.
-\section{Edit Layout Rect Disk Tool Dialog}
+\subsection{Edit Layout Rect Disk Tool Dialog}
 This tool dialog box is used to create a rectangle or disk item in a
 card layout.
-\section{Edit Layout Bitmap Tool Dialog}
+\subsection{Edit Layout Bitmap Tool Dialog}
 This tool dialog box is used to create a bitmap item in a card layout.
-\section{Edit Layout Resize Tool Dialog}
+\subsection{Edit Layout Resize Tool Dialog}
 This tool dialog box is used to resize an existing item in a card layout.
-\section{Edit Layout}
+\subsection{Edit Layout}
 This window provides for editing a card layout.
-\section{Print Progress}
+\subsection{Print Progress}
 This window shows the print progress of either text output or cards.
-\section{More Info Window}
+\subsection{More Info Window}
 This window shows more information about a selected card.
 
 
