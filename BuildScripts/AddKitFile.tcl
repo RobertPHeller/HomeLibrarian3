@@ -3,10 +3,7 @@
 #* AddKitFile.tcl - Add kit files (symlinked) to a kit lib dir
 #* Created by Robert Heller on Wed Jan 10 14:19:51 2007
 #* ------------------------------------------------------------------
-#* Modification History: $Log: AddKitFile.tcl,v $
-#* Modification History: Revision 1.1  2007/09/29 14:17:56  heller
-#* Modification History: 3.0b1 Lockdown
-#* Modification History:
+#* Modification History: $Log$
 #* Modification History: Revision 1.1  2007/02/01 20:00:51  heller
 #* Modification History: Lock down for Release 2.1.7
 #* Modification History:
@@ -45,6 +42,13 @@ package provide app-AddKitFile 1.0
 # command line arguments: <kit name> <dir path> files...
 #*************************
 
+global srcdir
+set srcdir {}
+if {[string equal [lindex $argv 0] "-srcdir"]} {
+  set srcdir [lindex $argv 1]
+  set argv [lrange $argv 2 end]
+}
+
 if {$argc < 3} {
   puts stderr "usage: [file rootname [file tail [info script]]].kit <kit name> <dir path> files..."
   exit 99
@@ -60,6 +64,11 @@ file mkdir $Dir
 
 set files [lrange $argv 2 end]
 foreach file $files {
-  file link [file join $Dir [file tail $file]] [file normalize $file]
+  if {![file exists $file] && [string length $srcdir] > 0} {
+    set  file [file join $srcdir $file]
+  }
+  if {![file exists [file join $Dir [file tail $file]]]} {
+    file link [file join $Dir [file tail $file]] [file normalize $file]
+  }
 }
 

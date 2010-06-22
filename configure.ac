@@ -1,9 +1,24 @@
-AC_INIT(HomeLibrarian,3.0b2)
+AC_INIT()
+
+AC_CANONICAL_BUILD
+AC_CANONICAL_HOST
+AC_SUBST(build)
+AC_CANONICAL_TARGET
+AC_SUBST(target)
+
+dnl Force cross_compiling, even if it *looks* like we can run cross-built 
+dnl binaries (get around wine's cleverness).
+if test ${cross_compiling} = "maybe"; then
+  if test ${target_os} != ${build_os}; then
+    cross_compiling=yes
+  fi
+fi  
+
 AC_CONFIG_SRCDIR(Scripts/HL3.src)
-AM_INIT_AUTOMAKE
+AM_INIT_AUTOMAKE(HomeLibrarian,3.0b3)
 
 AC_CONFIG_FILES([Makefile Images/Makefile Scripts/Makefile Documentation/Makefile 
-		 BuildScripts/Makefile Help/Makefile])
+		 BuildScripts/Makefile BuildData/Makefile])
 
 if test "x${prefix}" = "xNONE"; then
     prefix=/usr/local
@@ -19,13 +34,12 @@ AC_SUBST(TOP_DIR)
 AC_SUBST(BUILD_DIR)
 
 
+AC_PATH_PROG(DOXYGEN,doxygen,/bin/true)
 AC_PATH_PROG(PDFLATEX,pdflatex,/bin/true)
 AC_CHECK_PROGS(HTLATEX,[htlatex htlatex.sh])
 AC_SUBST(HTLATEX)
 AC_PATH_PROG(MAKEINDEX,makeindex,/bin/true)
 AC_PATH_PROG(BIBTEX,bibtex,/bin/true)
-AC_PATH_PROGS(SDX,[sdx.kit sdx])
-AC_PATH_PROGS(TCLKIT,tclkit)
 AC_PATH_PROGS(HOSTTCLSH,[tclsh8.4 tclsh])
 
 TCL_LIBRARY=`echo 'puts $tcl_library'|${HOSTTCLSH}`
@@ -108,40 +122,66 @@ else
 fi
 AC_SUBST(URILIB)
 
+AC_PATH_PROGS(UNZIP,unzip)
+AC_MSG_CHECKING([Checking target Img, Tclxml,  and tclkit])
+case $target_os in 
+  linux-gnu)
+    case $target_cpu in
+      x86_64|i*86)
+        AC_SUBST(IMG_ZIP, Img-1.3-Linux32.zip)
+        AC_SUBST(TCLKITRUN, tclkit-linux-x86)
+        AC_SUBST(TCLXML_ZIP, Tclxml3.1-Linux32.zip)
+        ;;
+      *)
+        AC_MSG_ERROR([Unsupported Linux arch: $target_cpu])
+        ;;
+     esac
+     ;;
 
-AC_MSG_CHECKING(Tclxml dir)
-TCLXMLLIB=${TCL_LIBRARY}
-dirs=${TCL_AUTO_PATH}
-for i in $dirs ; do 
-  subdirs="$i/Tclxml*"
-  for j in $subdirs ; do
-    if test -d "$j" -a -f "$j/pkgIndex.tcl"; then
-      TCLXMLLIB=`cd $j; pwd`
-    fi
-  done
-done
-AC_ARG_WITH(tclxmllib, [  --with-tclxmllib=DIR          use Tclxml from DIR], TCLXMLLIB=$withval,)
-if test -d $TCLXMLLIB; then
-   AC_MSG_RESULT([using Tclxml library in $TCLXMLLIB])
-else
-   AC_MSG_ERROR(Tclxml library directory $TCLXMLLIB doesn't exist)
-fi
-AC_SUBST(TCLXMLLIB)
+   mingw32 | winnt | windows* | cygwin)
+     AC_SUBST(IMG_ZIP, Img-1.3-win32.zip)
+     AC_SUBST(TCLKITRUN, tclkit-win32.exe)
+     AC_SUBST(TCLXML_ZIP, Tclxml2.6-win32.zip)
+     AC_SUBST(EXEEXT, .exe)
+     ;;
+   *) 
+     AC_MSG_ERROR([Unsupported Operating System: $target_os])
+     ;;
+esac
+AC_MSG_RESULT([IMG_ZIP is $IMG_ZIP, TCLXML_ZIP is $TCLXML_ZIP, and TCLKITRUN is $TCLKITRUN])
 
-TCLKITRUN="${TCL_EXEC_PREFIX}/bin/tclkit$EXEEXT"
-AC_ARG_WITH(tclkitrun, [  --with-tclkitrun=filename     use tclkit runtime in fi
-lename], TCLKITRUN=$withval,)
-if test -x $TCLKITRUN;  then
-   AC_MSG_RESULT([using tclkit runtime $TCLKITRUN])
-else
-   AC_MSG_ERROR([Can't find tclkit, please use --with-tclkitrun to set the tclki
-t])
-fi
-AC_SUBST(TCLKITRUN)
+AC_MSG_CHECKING([Checking build tclkit])
+case $build_os in 
+  macos | darwin) 
+    AC_SUBST(TCLKITBSRC, tclkit-darwin-univ-aqua)
+    AC_SUBST(BEXEEXT, )
+    ;;
+  linux-gnu)
+    AC_SUBST(BEXEEXT, )
+    case $build_cpu in
+      x86_64)
+        AC_SUBST(TCLKITBSRC, tclkit-linux-x86_64)
+        ;;
+      i*86)
+        AC_SUBST(TCLKITBSRC, tclkit-linux-x86)
+        ;;
+      *)
+        AC_MSG_ERROR([Unsupported Linux arch: $build_cpu])
+        ;;
+     esac
+     ;;
 
-AC_PATH_PROG(PDFLATEX,pdflatex,/bin/true)
-AC_PATH_PROGS(HTLATEX,[htlatex htlatex.sh],/bin/true)
+   mingw32 | winnt | windows* | cygwin)
+     AC_SUBST(BEXEEXT, .exe)
+     AC_SUBST(TCLKITBSRC, tclkit-win32.exe)
+     ;;
+   *) 
+     AC_MSG_ERROR([Unsupported Operating System: $build_os])
+     ;;
+esac
+AC_MSG_RESULT([TCLKITBSRC is $TCLKITBSRC])
 
+AC_PATH_PROG(SED,sed)
 
 AC_OUTPUT
 

@@ -119,7 +119,7 @@ Create Table Keywords (
 			-default 0 -cancel 1]
       $dialog add -name ok -text OK -command [mytypemethod _OK]
       $dialog add -name cancel -text Cancel -command [mytypemethod _Cancel]
-      $dialog add -name help -text Help -command "BWHelp::HelpTopic GetConnectionStringDialog"
+      $dialog add -name help -text Help -command [list HTMLHelp::HTMLHelp help {Get Connection String Dialog}]
       set frame [$dialog getframe]
       set driverlf [LabelFrame::create $frame.driverlf \
 				-text "Available Drivers" -side top]
@@ -277,7 +277,7 @@ proc Database::ConnectToDatabase {} {
   set Environment database
   Windows::HideSplash {
     while {1} {
-#      puts stderr "*** Database::ConnectToDatabase (top of while loop): ConnectionString = '$ConnectionString'"
+      puts stderr "*** Database::ConnectToDatabase (top of while loop): ConnectionString = '$ConnectionString'"
       if {[string equal "$ConnectionString" {}]} {
         set ConnectionString [GetConnectionString $Environment]
         if {[string equal "$ConnectionString" {}]} {
@@ -287,13 +287,13 @@ proc Database::ConnectToDatabase {} {
       set connCmd [list $Environment connect [gensym conn] "$ConnectionString"]
       if {[catch "$connCmd" Connection]} {
         global errorInfo
-#        puts stderr "*** Database::ConnectToDatabase: $Connection: $errorInfo"
+        puts stderr "*** Database::ConnectToDatabase: $Connection: $errorInfo"
         tk_messageBox -type ok -icon error -message "$Connection"
         set Connection {}
         set ConnectionString {}
         continue
       }
-#      puts stderr "*** Database::ConnectToDatabase: Connection = '$Connection'"
+      puts stderr "*** Database::ConnectToDatabase: Connection = '$Connection'"
       if {![HaveData]} {
 	if {[AskCreateTables]} {
 	  New 1
@@ -307,7 +307,7 @@ proc Database::ConnectToDatabase {} {
         break
       }
     }
-#    puts stderr "*** Database::ConnectToDatabase (after while): ConnectionString = '$ConnectionString', Connection = '$Connection'"
+    puts stderr "*** Database::ConnectToDatabase (after while): ConnectionString = '$ConnectionString', Connection = '$Connection'"
     if {![HaveData]} {
       tk_messageBox -type ok -icon error \
 	-message "Could not make a connection to a database server, sorry!"
@@ -356,13 +356,13 @@ proc Database::CloseDatabase {} {
 }
   
 proc Database::HaveData {} {
-#  puts stderr "*** Database::HaveData"
+  puts stderr "*** Database::HaveData"
   variable Connection
-#  puts stderr "*** Database::HaveData: Connection = '$Connection'"
+  puts stderr "*** Database::HaveData: Connection = '$Connection'"
   if {[string equal "$Connection" {}]} {return no}
 
   set c [$Connection tables cards]
-#  puts stderr "*** Database::HaveData: c1 = '$c1', c2 = '$c2', c3 = '$c3'"
+  puts stderr "*** Database::HaveData: c = '$c'"
   if {[llength $c] < 1} {
     return no
   } else {

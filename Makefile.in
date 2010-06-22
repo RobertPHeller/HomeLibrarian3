@@ -34,10 +34,14 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-subdir = .
+build_triplet = @build@
+host_triplet = @host@
+target_triplet = @target@
 DIST_COMMON = README $(am__configure_deps) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(top_srcdir)/configure AUTHORS COPYING \
-	ChangeLog INSTALL NEWS install-sh missing
+	ChangeLog INSTALL NEWS config.guess config.sub install-sh \
+	missing
+subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
@@ -77,17 +81,21 @@ AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
 AWK = @AWK@
+BEXEEXT = @BEXEEXT@
 BIBTEX = @BIBTEX@
 BUILD_DIR = @BUILD_DIR@
 BWLIB = @BWLIB@
 CYGPATH_W = @CYGPATH_W@
 DEFS = @DEFS@
+DOXYGEN = @DOXYGEN@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
+EXEEXT = @EXEEXT@
 HOSTTCLSH = @HOSTTCLSH@
 HTLATEX = @HTLATEX@
 HTTPLIB = @HTTPLIB@
+IMG_ZIP = @IMG_ZIP@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
@@ -105,14 +113,15 @@ PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 PDFLATEX = @PDFLATEX@
-SDX = @SDX@
+SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
-TCLKIT = @TCLKIT@
+TCLKITBSRC = @TCLKITBSRC@
 TCLKITRUN = @TCLKITRUN@
-TCLXMLLIB = @TCLXMLLIB@
+TCLXML_ZIP = @TCLXML_ZIP@
 TOP_DIR = @TOP_DIR@
+UNZIP = @UNZIP@
 URILIB = @URILIB@
 VERSION = @VERSION@
 ac_ct_STRIP = @ac_ct_STRIP@
@@ -120,10 +129,18 @@ am__leading_dot = @am__leading_dot@
 am__tar = @am__tar@
 am__untar = @am__untar@
 bindir = @bindir@
+build = @build@
 build_alias = @build_alias@
+build_cpu = @build_cpu@
+build_os = @build_os@
+build_vendor = @build_vendor@
 datadir = @datadir@
 exec_prefix = @exec_prefix@
+host = @host@
 host_alias = @host_alias@
+host_cpu = @host_cpu@
+host_os = @host_os@
+host_vendor = @host_vendor@
 includedir = @includedir@
 infodir = @infodir@
 install_sh = @install_sh@
@@ -138,21 +155,23 @@ program_transform_name = @program_transform_name@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
+target = @target@
 target_alias = @target_alias@
+target_cpu = @target_cpu@
+target_os = @target_os@
+target_vendor = @target_vendor@
+SUBDIRS = Images Scripts Documentation BuildScripts BuildData
 ACLOCAL_AMFLAGS = -I .
 bin_SCRIPTS = HL3$(EXEEXT)
-SUBDIRS = Images Scripts Documentation BuildScripts Help
-LibraryScripts = Scripts/BWHelp.tcl Scripts/labelselectcolor.tcl \
-		 Scripts/panedw.tcl Scripts/fileentry.tcl \
-		 Scripts/labelspinbox.tcl Scripts/splash.tcl \
-		 Scripts/labelcombobox.tcl Scripts/mainwindow.tcl \
-		 Scripts/BWStdMenuBar.tcl Scripts/AnimatedHeader.tcl \
-		 Scripts/SearchWindow.tcl Scripts/EditWindow.tcl \
-		 Scripts/DatabaseFunctions.tcl Scripts/AECFunctions.tcl \
-		 Scripts/PrintFunctions.tcl Scripts/ImportV1Ascii.tcl \
-		 Scripts/ImportV2Ascii.tcl
+LibraryScripts = $(wildcard $(top_srcdir)/Scripts/*.tcl) $(wildcard Scripts/*.tcl)
+AllImages = $(wildcard $(top_srcdir)/Images/*.gif) \
+                $(wildcard $(top_srcdir)/Images/*.png)
 
-EXTRA_DIST = bootstrap snodbc.kit
+AllHelpDep = Documentation/UserManual/UserManual.html
+AllHelpFiles = $(wildcard Documentation/UserManual/*)
+EXTRA_DIST = bootstrap snodbc.kit Doxyfile.in Doxyfile
+SDX = $(top_srcdir)/BuildScripts/sdx.kit
+TCLKIT = $(top_builddir)/BuildData/tclkit${BEXEEXT}
 all: all-recursive
 
 .SUFFIXES:
@@ -386,7 +405,7 @@ distdir: $(DISTFILES)
 	      || exit 1; \
 	  fi; \
 	done
-	-find $(distdir) -type d ! -perm -777 -exec chmod a+rwx {} \; -o \
+	-find $(distdir) -type d ! -perm -755 -exec chmod a+rwx,go+rx {} \; -o \
 	  ! -type d ! -perm -444 -links 1 -exec chmod a+r {} \; -o \
 	  ! -type d ! -perm -400 -exec chmod a+r {} \; -o \
 	  ! -type d ! -perm -444 -exec $(SHELL) $(install_sh) -c -m a+r {} {} \; \
@@ -517,7 +536,7 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-recursive
 
-clean-am: clean-generic mostlyclean-am
+clean-am: clean-generic clean-local mostlyclean-am
 
 distclean: distclean-recursive
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
@@ -567,7 +586,7 @@ uninstall-am: uninstall-binSCRIPTS uninstall-info-am
 uninstall-info: uninstall-info-recursive
 
 .PHONY: $(RECURSIVE_TARGETS) CTAGS GTAGS all all-am am--refresh check \
-	check-am clean clean-generic clean-recursive ctags \
+	check-am clean clean-generic clean-local clean-recursive ctags \
 	ctags-recursive dist dist-all dist-bzip2 dist-gzip dist-shar \
 	dist-tarZ dist-zip distcheck distclean distclean-generic \
 	distclean-recursive distclean-tags distcleancheck distdir \
@@ -583,56 +602,70 @@ uninstall-info: uninstall-info-recursive
 
 
 HL3$(EXEEXT) : Scripts/HL3.src $(LibraryScripts) \
-		$(top_builddir)/Help/hh.index \
-		$(top_builddir)/Help/index.hh \
-		$(top_builddir)/snodbc.kit \
-		$(top_builddir)/Images/*.gif
+		$(top_srcdir)/snodbc.kit $(AllImages) $(AllHelpDep)
 	-rm -f  HL3.kit
 	-rm -rf HL3.vfs
-	$(TCLKIT) $(SDX) qwrap Scripts/HL3.src
+	$(TCLKIT) $(SDX) qwrap $(srcdir)/Scripts/HL3.src
 	$(TCLKIT) $(SDX) unwrap HL3.kit
 	-rm -f  HL3.kit
-	$(TCLKIT) $(top_builddir)/BuildScripts/AddKitDir.kit HL3 \
+	$(TCLKIT) $(top_srcdir)/BuildScripts/AddKitDir.kit HL3 \
 		lib $(BWLIB)
-	$(TCLKIT) $(top_builddir)/BuildScripts/AddKitDir.kit HL3 \
+	$(TCLKIT) $(top_srcdir)/BuildScripts/AddKitDir.kit HL3 \
 		lib $(HTTPLIB)
-	$(TCLKIT) $(top_builddir)/BuildScripts/AddKitDir.kit HL3 \
+	$(TCLKIT) $(top_srcdir)/BuildScripts/AddKitDir.kit HL3 \
 		lib $(URILIB)
-	$(TCLKIT) $(top_builddir)/BuildScripts/AddKitDir.kit HL3 \
-		lib $(TCLXMLLIB)
+	$(UNZIP) -qq -d HL3.vfs/lib \
+		$(top_srcdir)/BuildData/$(IMG_ZIP)
+	$(UNZIP) -qq -d HL3.vfs/lib \
+		$(top_srcdir)/BuildData/$(TCLXML_ZIP)
+	$(UNZIP) -qq -d HL3.vfs/lib \
+		$(top_srcdir)/BuildData/pdf4tcl05.zip
 	-rm -rf  snodbc.vfs
-	$(TCLKIT) $(SDX) unwrap $(top_builddir)/snodbc.kit
-	$(TCLKIT) $(top_builddir)/BuildScripts/AddKitDir.kit HL3 \
+	$(TCLKIT) $(SDX) unwrap $(top_srcdir)/snodbc.kit
+	$(TCLKIT) $(top_srcdir)/BuildScripts/AddKitDir.kit HL3 \
 		lib snodbc.vfs/lib
-	$(TCLKIT) $(top_builddir)/BuildScripts/AddKitDir.kit HL3 \
+	$(TCLKIT) $(top_srcdir)/BuildScripts/AddKitDir.kit HL3 \
 		lib snodbc.vfs/compat-lib
-	$(TCLKIT) $(top_builddir)/BuildScripts/AddKitFile.kit HL3 \
-		lib/Common $(LibraryScripts)
-	$(TCLKIT) $(top_builddir)/BuildScripts/MakePkgIndex.kit HL3 \
+	$(TCLKIT) $(top_srcdir)/BuildScripts/AddKitFile.kit -srcdir $(srcdir) \
+		HL3 lib/Common $(LibraryScripts)
+	$(TCLKIT) $(top_srcdir)/BuildScripts/MakePkgIndex.kit HL3 \
 		Common
-	$(TCLKIT) $(top_builddir)/BuildScripts/AddKitFile.kit HL3 \
-		Help $(top_builddir)/Help/*.hh \
-		     $(top_builddir)/Help/hh.index
-	$(TCLKIT) $(top_builddir)/BuildScripts/AddKitFile.kit HL3 \
-		Images $(top_builddir)/Images/*.gif
-	$(TCLKIT) $(SDX) wrap HL3$(EXEEXT) -runtime $(TCLKITRUN)
+	$(TCLKIT) $(top_srcdir)/BuildScripts/AddKitFile.kit -srcdir $(srcdir) \
+		HL3 Help $(AllHelpFiles)
+	$(TCLKIT) $(top_srcdir)/BuildScripts/AddKitFile.kit -srcdir $(srcdir) \
+		HL3 Images $(AllImages)
+	$(TCLKIT) $(SDX) wrap HL3$(EXEEXT) \
+			-runtime $(top_srcdir)/BuildData/$(TCLKITRUN)
 	-rm -rf  snodbc.vfs
 	-rm -rf HL3.vfs
 
-$(top_builddir)/Help/hh.index : \
-	$(top_builddir)/Help/*.hh
-	$(MAKE) -C $(top_builddir)/Help/hh.index
+$(top_builddir)/BuildData/tclkit${BEXEEXT}: FORCE
+	$(MAKE) -C $(top_builddir)/BuildData tclkit${BEXEEXT}
 
-$(top_builddir)/Help/index.hh : \
-	$(top_builddir)/Help/*.hh
-	$(MAKE) -C $(top_builddir)/Help/index.hh
+$(top_builddir)/Scripts/Version.tcl: $(top_builddir)/config.status
+	$(MAKE) -C $(top_builddir)/Scripts Version.tcl
 
-binzip: $(bin_SCRIPTS)
-	-rm -f $(distdir)-$(PLATFORM)Bin.zip
-	zip $(distdir)-$(PLATFORM)Bin.zip $^
+FORCE:
 
-bintgz: $(bin_SCRIPTS)
-	tar cjvf $(distdir)-$(PLATFORM)Bin.tar.bz2 $^
+Documentation/UserManual/UserManual.html: FORCE
+	$(MAKE) -C $(top_builddir)/Documentation UserManual/UserManual.html
+
+dist-binary-tarbz2: all
+	$(MAKE) $(AM_MAKEFLAGS) DESTDIR=/tmp/$(PACKAGE)-$(VERSION)-$(target) install
+	tar cjf $(PACKAGE)-$(VERSION)-$(target).tar.bz2 -C /tmp/$(PACKAGE)-$(VERSION)-$(target)${prefix} .
+	rm -rf /tmp/$(PACKAGE)-$(VERSION)-$(target)
+
+dist-binary-zip: all
+	$(MAKE) $(AM_MAKEFLAGS) DESTDIR=/tmp/$(PACKAGE)-$(VERSION)-$(target) install
+	rm -f $(PACKAGE)-$(VERSION)-$(target).zip
+	(cd  /tmp/$(PACKAGE)-$(VERSION)-$(target)${prefix}; zip -rq $(BUILD_DIR)/$(PACKAGE)-$(VERSION)-$(target).zip .)
+
+man1/HL3.1 : Doxyfile Scripts/HL3.src
+	-rm -rf man1
+	$(DOXYGEN)
+
+clean-local:
+	-rm -rf man1
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

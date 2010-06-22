@@ -79,7 +79,7 @@ namespace eval Edit {
 			-default 0 -cancel 1]
       $dialog add -name ok -text OK -command [mytypemethod _OK]
       $dialog add -name cancel -text Cancel -command [mytypemethod _Cancel]
-      $dialog add -name help -text Help -command "BWHelp::HelpTopic SelectATemplateDialog"
+      $dialog add -name help -text Help -command [list ::HTMLHelp::HTMLHelp help {Select A Template Dialog}]
       set frame [$dialog getframe]
       set templateListSW [ScrolledWindow::create $frame.templateListSW \
 				-auto both -scrollbar both]
@@ -353,7 +353,7 @@ namespace eval Edit {
       pack $editBB -fill x
       $editBB add -name save -text Save -command [mymethod _Save]
       $editBB add -name dismis -text Dismis -command [mymethod _Dismis]
-      $editBB add -name help -text Help -command "BWHelp::HelpTopic EditTemplate"
+      $editBB add -name help -text Help -command [list ::HTMLHelp::HTMLHelp help {Edit Template}]
       wm protocol $win WM_DELETE_WINDOW [mymethod _Dismis]
       set _EditorsByName($options(-templatename)) $self
       $dirtylabel configure -foreground [$dirtylabel cget -background]
@@ -735,7 +735,7 @@ namespace eval Edit {
       pack $editBB -fill x
       $editBB add -name save -text Save -command [mymethod _Save]
       $editBB add -name dismis -text Dismis -command [mymethod _Dismis]
-      $editBB add -name help -text Help -command "BWHelp::HelpTopic EditCard"
+      $editBB add -name help -text Help -command [list ::HTMLHelp::HTMLHelp help {Edit Card}]
       wm protocol $win WM_DELETE_WINDOW [mymethod _Dismis]
       if {$options(-new)} {
 	if {[string equal "$options(-haveamazonurl)" {}] && 
@@ -1013,7 +1013,7 @@ namespace eval Edit {
 			-default 0 -cancel 1]
       $dialog add -name ok -text OK -command [mytypemethod _OK]
       $dialog add -name cancel -text Cancel -command [mytypemethod _Cancel]
-      $dialog add -name help -text Help -command "BWHelp::HelpTopic GetNewKeyDialog"
+      $dialog add -name help -text Help -command [list ::HTMLHelp::HTMLHelp help {Get New Key Dialog}]
       set frame [$dialog getframe]
       set newKeyLE [LabelEntry::create $frame.newKeyLE \
 				-label "New key:" -side left -text {}]
@@ -1068,7 +1068,7 @@ namespace eval Edit {
       $dialog add -name oktemp -text {Use Template} -command [mytypemethod _OKTemp]
       $dialog add -name okurl -text {Use Amazon URL} -command [mytypemethod _OKURL]
       $dialog add -name cancel -text Cancel -command [mytypemethod _Cancel]
-      $dialog add -name help -text Help -command "BWHelp::HelpTopic GetNewCardTemplateOrAmazonURLDialog"
+      $dialog add -name help -text Help -command [list ::HTMLHelp::HTMLHelp help {Get New Card Template Or Amazon URL Dialog}]
       set frame [$dialog getframe]
       set templateSW [ScrolledWindow::create $frame.templateSW -auto both -scrollbar both]
       pack $templateSW -expand yes -fill both -side left

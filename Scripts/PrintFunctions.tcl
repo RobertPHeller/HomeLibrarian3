@@ -65,7 +65,7 @@ namespace eval Print {
 			-title "Select Printer" -default 0 -cancel 1]
       $dialog add -name ok -text OK -command [mytypemethod _OK]
       $dialog add -name cancel -text Cancel -command [mytypemethod _Cancel]
-      $dialog add -name help -text Help -command "BWHelp::HelpTopic SelectPrinterDialog"
+      $dialog add -name help -text Help -command [list ::HTMLHelp::HTMLHelp help {Select Printer Dialog}]
       set frame [$dialog getframe]
       set printerRB [radiobutton $frame.printerRB \
 				-command [mytypemethod _TogglePF] \
@@ -325,7 +325,7 @@ namespace eval Print {
 			-default 0 -cancel 1]
       $dialog add -name ok -text OK -command [mytypemethod _OK]
       $dialog add -name cancel -text Cancel -command [mytypemethod _Cancel]
-      $dialog add -name help -text Help -command "BWHelp::HelpTopic SelectALayoutDialog"
+      $dialog add -name help -text Help -command [list ::HTMLHelp::HTMLHelp help {Select A Layout Dialog}]
       set frame [$dialog getframe]
       set layoutListSW [ScrolledWindow::create $frame.layoutListSW \
 				-auto both -scrollbar both]
@@ -722,7 +722,7 @@ namespace eval Print {
 				-title "Text tool" -default 0 -cancel 1]
       $textToolDialog add -name ok -text OK -command [mytypemethod _TextToolOK]
       $textToolDialog add -name cancel -text Cancel -command [mytypemethod _TextToolCancel]
-      $textToolDialog add -name help -text Help -command "BWHelp::HelpTopic EditLayoutTextToolDialog"
+      $textToolDialog add -name help -text Help -command [list ::HTMLHelp::HTMLHelp help {Edit Layout Text Tool Dialog}]
       set frame [$textToolDialog getframe]
       set textnameLE   [LabelEntry::create $frame.textnameLE \
 			-label Name: -labelwidth 10 -editable yes]
@@ -787,7 +787,7 @@ namespace eval Print {
 				-title "Line tool" -default 0 -cancel 1]
       $lineToolDialog add -name ok -text OK -command [mytypemethod _LineToolOK]
       $lineToolDialog add -name cancel -text Cancel -command [mytypemethod _LineToolCancel]
-      $lineToolDialog add -name help -text Help -command "BWHelp::HelpTopic EditLayoutLineToolDialog"
+      $lineToolDialog add -name help -text Help -command [list ::HTMLHelp::HTMLHelp help {Edit Layout Line Tool Dialog}]
       set frame [$lineToolDialog getframe]
       set linenameLE   [LabelEntry::create $frame.linenameLE \
 			-label Name: -labelwidth 10 -editable yes]
@@ -845,7 +845,7 @@ namespace eval Print {
 				-title "Rect / Disk tool" -default 0 -cancel 1]
       $rectDiskToolDialog add -name ok -text OK -command [mytypemethod _RectDiskToolOK]
       $rectDiskToolDialog add -name cancel -text Cancel -command [mytypemethod _RectDiskToolCancel]
-      $rectDiskToolDialog add -name help -text Help -command "BWHelp::HelpTopic EditLayoutRectDiskToolDialog"
+      $rectDiskToolDialog add -name help -text Help -command [list ::HTMLHelp::HTMLHelp help {Edit Layout Rect Disk Tool Dialog}]
       set frame [$rectDiskToolDialog getframe]
       set rectDisknameLE   [LabelEntry::create $frame.rectDisknameLE \
 			-label Name: -labelwidth 15 -editable yes]
@@ -895,7 +895,7 @@ namespace eval Print {
 				-title "Bitmap tool" -default 0 -cancel 1]
       $bitmapToolDialog add -name ok -text OK -command [mytypemethod _BitmapToolOK]
       $bitmapToolDialog add -name cancel -text Cancel -command [mytypemethod _BitmapToolCancel]
-      $bitmapToolDialog add -name help -text Help -command "BWHelp::HelpTopic EditLayoutBitmapToolDialog"
+      $bitmapToolDialog add -name help -text Help -command [list ::HTMLHelp::HTMLHelp help {Edit Layout Bitmap Tool Dialog}]
       set frame [$bitmapToolDialog getframe]
       set bitmapnameLE   [LabelEntry::create $frame.bitmapnameLE \
 			-label Name: -labelwidth 20 -editable yes]
@@ -947,7 +947,7 @@ namespace eval Print {
 				-title "Resize tool" -default 0 -cancel 1]
       $resizeToolDialog add -name ok -text OK -command [mytypemethod _ResizeToolOK]
       $resizeToolDialog add -name cancel -text Cancel -command [mytypemethod _ResizeToolCancel]
-      $resizeToolDialog add -name help -text Help -command "BWHelp::HelpTopic EditLayoutResizeToolDialog"
+      $resizeToolDialog add -name help -text Help -command [list ::HTMLHelp::HTMLHelp help {Edit Layout Resize Tool Dialog}]
       set frame [$resizeToolDialog getframe]
       set resizeWidthLE [LabelEntry::create $frame.resizeWidthSB \
 			-label Width: -labelwidth 7 -text 5i]
@@ -1003,7 +1003,7 @@ namespace eval Print {
       $editBB add -name edit -text Edit -command [mymethod _EditSelected]
       $editBB add -name save -text Save -command [mymethod _Save]
       $editBB add -name dismis -text Dismis -command [mymethod _Dismis]
-      $editBB add -name help -text Help -command "BWHelp::HelpTopic EditLayout"
+      $editBB add -name help -text Help -command [list ::HTMLHelp::HTMLHelp help {Edit Layout}]
       wm protocol $win WM_DELETE_WINDOW [mymethod _Dismis]
       install layoutCanvasSW using ScrolledWindow::create \
 			$frame.layoutCanvasSW -scrollbar both -auto both
@@ -2083,7 +2083,7 @@ namespace eval Print {
       $buttons add -name cancel -text Cancel -default normal \
 		   -command [mymethod _Cancel]
       $buttons add -name help -text Help -default normal \
-		   -command "BWHelp::HelpTopic PrintProgress"
+		   -command [list ::HTMLHelp::HTMLHelp help {Print Progress}]
       wm protocol $win WM_DELETE_WINDOW [mymethod _Cancel]
     }
     method _Print {} {

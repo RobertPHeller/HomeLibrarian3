@@ -42,6 +42,6 @@
 #* $Id$ 
 #* 
 EXTRA_DIST = HelpIndexBuild.tcl IndexHH.tcl \
-	HelpIndexBuild.kit IndexHH.kit \
+	HelpIndexBuild.kit IndexHH.kit sdx.kit \
 	AddKitDir.kit AddKitDir.tcl AddKitFile.kit AddKitFile.tcl \
-	MakePkgIndex.kit MakePkgIndex.tcl
+	MakePkgIndex.kit MakePkgIndex.tcl tcl2dox.kit tcl2dox.tcl

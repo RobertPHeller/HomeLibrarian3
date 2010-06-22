@@ -98,15 +98,15 @@ namespace eval StdMenuBar {
   }
   variable _std_help_menu {
     "&Help" {help} {help} 0 {
-	{command "On &Context..." {help:context} "Help on context" {} -command BWHelp::HelpContext}
-	{command "On &Help..." {help:help} "Help on help" {} -command "BWHelp::HelpTopic Help"}
-	{command "On &Window..." {help:window} "Help on the current window" {} -command "BWHelp::HelpWindow"}
-	{command "On &Keys..." {help:keys} "Help on keyboard accelerators" {} -command "BWHelp::HelpTopic Keys"}
-	{command "&Index..." {help:index} "Help index" {} -command "BWHelp::HelpTopic Index"}
-	{command "&Tutorial..." {help:tutorial} "Tutorial" {}  -command "BWHelp::HelpTopic Tutorial"}
-	{command "On &Version" {help:version} "Version" {} -command "BWHelp::HelpTopic Version"}
-	{command "Warranty" {help:warranty} "Warranty" {} -command "BWHelp::HelpTopic Warranty"}
-	{command "Copying" {help:copying} "Copying" {} -command "BWHelp::HelpTopic Copying"}
+	{command "On &Context..." {help:context} "Help on context" {}}
+	{command "On &Help..." {help:help} "Help on help" {}}
+	{command "On &Window..." {help:window} "Help on the current window" {}}
+	{command "On &Keys..." {help:keys} "Help on keyboard accelerators" {}}
+	{command "&Index..." {help:index} "Help index" {} -command}
+	{command "&Tutorial..." {help:tutorial} "Tutorial" {}}
+	{command "On &Version" {help:version} "Version" {}}
+	{command "Warranty" {help:warranty} "Warranty" {}}
+	{command "Copying" {help:copying} "Copying" {}}
     }
   }
 

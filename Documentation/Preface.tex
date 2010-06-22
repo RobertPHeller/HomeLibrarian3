@@ -1,0 +1,35 @@
+\chapter*{Preface}
+\markboth{PREFACE}{PREFACE}%
+\typeout{$Id$}
+\addcontentsline{toc}{chapter}{Preface}
+
+
+The {\em Home Librarian} system maintains a database of ``cards'',
+which describe books, magazines, video and audio tapes, CDs, record
+albums, laser disks, and other similar items. Version 3 of the system
+uses a relational database backend (such as PostgreSQL, MySQL, SQL
+Server, or SQLite). It connects to the backend database via a ODBC
+driver library, so any backend database system that has a ODBC driver
+library can be used.  The system uses two database tables, a table of
+cards and a table of keywords.  The system also hooks into Amazon's
+database using Amazon Web Services.
+
+This version of the {\em Home Librarian} system is
+written entirely in Tcl\footnote{It does use some standard C coded
+extensions.} and there is no longer any C or C++ code. The system is
+also built using Starpacks, so there is no need to install any system
+support software either, since the executable program is completely
+self contained.
+
+If you have {\em any} comments about this package, please let me know.
+My contact information is shown on the back side of the title page.
+I would be very interested in any comments users of the {\em Home
+Librarian} package might have.
+
+\vspace{.25in}
+\noindent
+Robert Heller \\
+Deepwoods Software \\
+Wendell, MA, USA \\
+June, 2010
+

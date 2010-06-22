@@ -34,24 +34,20 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-subdir = Help
+build_triplet = @build@
+host_triplet = @host@
+target_triplet = @target@
+subdir = BuildData
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
+CONFIG_CLEAN_FILES =
+SCRIPTS = $(noinst_SCRIPTS)
 SOURCES =
 DIST_SOURCES =
-am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
-am__vpath_adj = case $$p in \
-    $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
-    *) f=$$p;; \
-  esac;
-am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
-am__installdirs = "$(DESTDIR)$(helpdir)"
-helpDATA_INSTALL = $(INSTALL_DATA)
-DATA = $(help_DATA)
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
@@ -59,17 +55,21 @@ AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
 AWK = @AWK@
+BEXEEXT = @BEXEEXT@
 BIBTEX = @BIBTEX@
 BUILD_DIR = @BUILD_DIR@
 BWLIB = @BWLIB@
 CYGPATH_W = @CYGPATH_W@
 DEFS = @DEFS@
+DOXYGEN = @DOXYGEN@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
+EXEEXT = @EXEEXT@
 HOSTTCLSH = @HOSTTCLSH@
 HTLATEX = @HTLATEX@
 HTTPLIB = @HTTPLIB@
+IMG_ZIP = @IMG_ZIP@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
@@ -87,14 +87,15 @@ PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 PDFLATEX = @PDFLATEX@
-SDX = @SDX@
+SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
-TCLKIT = @TCLKIT@
+TCLKITBSRC = @TCLKITBSRC@
 TCLKITRUN = @TCLKITRUN@
-TCLXMLLIB = @TCLXMLLIB@
+TCLXML_ZIP = @TCLXML_ZIP@
 TOP_DIR = @TOP_DIR@
+UNZIP = @UNZIP@
 URILIB = @URILIB@
 VERSION = @VERSION@
 ac_ct_STRIP = @ac_ct_STRIP@
@@ -102,10 +103,18 @@ am__leading_dot = @am__leading_dot@
 am__tar = @am__tar@
 am__untar = @am__untar@
 bindir = @bindir@
+build = @build@
 build_alias = @build_alias@
+build_cpu = @build_cpu@
+build_os = @build_os@
+build_vendor = @build_vendor@
 datadir = @datadir@
 exec_prefix = @exec_prefix@
+host = @host@
 host_alias = @host_alias@
+host_cpu = @host_cpu@
+host_os = @host_os@
+host_vendor = @host_vendor@
 includedir = @includedir@
 infodir = @infodir@
 install_sh = @install_sh@
@@ -120,22 +129,23 @@ program_transform_name = @program_transform_name@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
+target = @target@
 target_alias = @target_alias@
-helpdir = $(datadir)/$(PACKAGE)-$(VERSION)/Help
-GIFFiles = 
-GeneratedHelpFiles = Copying.hh Warranty.hh Version.hh
-HelpFiles = Help.hh General.hh Database.hh Print.hh Edit.hh Import.hh \
-	Search.hh Tutorial.hh Amazon.hh
-HelpIndex = hh.index
-HelpIndexBuilder = $(top_srcdir)/BuildScripts/HelpIndexBuild.tcl
-IndexHHBuilder = $(top_srcdir)/BuildScripts/IndexHH.tcl
-IndexHH = index.hh
-EXTRA_DIST = $(HelpFiles) $(GIFFiles)
-CONFIG_CLEAN_FILES = $(HelpIndex) $(IndexHH)
-help_DATA = $(HelpFiles) $(GIFFiles) $(GeneratedHelpFiles) $(HelpIndex) \
-	$(IndexHH)
+target_cpu = @target_cpu@
+target_os = @target_os@
+target_vendor = @target_vendor@
+EXTRA_DIST = Img-1.3-Mac-Universal.zip Img-1.3-Linux32.zip Img-1.3-Linux64.zip \
+	   Img-1.3-win32.zip tclkit-darwin-univ-aqua tclkit-linux-x86 \
+	   tclkit-linux-x86_64 tclkit-win32.exe Tclxml2.6-win32.zip \
+	   Tclxml3.1-Linux32.zip Tclxml3.1-Linux64.zip pdf4tcl05.zip
 
-all: all-am
+BUILT_SOURCES = tclkit${BEXEEXT}
+noinst_SCRIPTS = tclkit${BEXEEXT}
+EXTRA_SCRIPTS = tclkit-darwin-univ-aqua tclkit-linux-x86 tclkit-linux-x86_64 \
+		 tclkit-win32.exe
+
+all: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) all-am
 
 .SUFFIXES:
 $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
@@ -147,9 +157,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu  Help/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu  BuildData/Makefile'; \
 	cd $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu  Help/Makefile
+	  $(AUTOMAKE) --gnu  BuildData/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -162,26 +172,12 @@ Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 
 $(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
+
+$(top_srcdir)/configure:  $(am__configure_deps)
+	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 uninstall-info-am:
-install-helpDATA: $(help_DATA)
-	@$(NORMAL_INSTALL)
-	test -z "$(helpdir)" || $(mkdir_p) "$(DESTDIR)$(helpdir)"
-	@list='$(help_DATA)'; for p in $$list; do \
-	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  f=$(am__strip_dir) \
-	  echo " $(helpDATA_INSTALL) '$$d$$p' '$(DESTDIR)$(helpdir)/$$f'"; \
-	  $(helpDATA_INSTALL) "$$d$$p" "$(DESTDIR)$(helpdir)/$$f"; \
-	done
-
-uninstall-helpDATA:
-	@$(NORMAL_UNINSTALL)
-	@list='$(help_DATA)'; for p in $$list; do \
-	  f=$(am__strip_dir) \
-	  echo " rm -f '$(DESTDIR)$(helpdir)/$$f'"; \
-	  rm -f "$(DESTDIR)$(helpdir)/$$f"; \
-	done
 tags: TAGS
 TAGS:
 
@@ -217,13 +213,12 @@ distdir: $(DISTFILES)
 	  fi; \
 	done
 check-am: all-am
-check: check-am
-all-am: Makefile $(DATA)
+check: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) check-am
+all-am: Makefile $(SCRIPTS)
 installdirs:
-	for dir in "$(DESTDIR)$(helpdir)"; do \
-	  test -z "$$dir" || $(mkdir_p) "$$dir"; \
-	done
-install: install-am
+install: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) install-am
 install-exec: install-exec-am
 install-data: install-data-am
 uninstall: uninstall-am
@@ -247,6 +242,7 @@ distclean-generic:
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
+	-test -z "$(BUILT_SOURCES)" || rm -f $(BUILT_SOURCES)
 clean: clean-am
 
 clean-am: clean-generic mostlyclean-am
@@ -265,7 +261,7 @@ info: info-am
 
 info-am:
 
-install-data-am: install-helpDATA
+install-data-am:
 
 install-exec-am:
 
@@ -291,42 +287,23 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-helpDATA uninstall-info-am
+uninstall-am: uninstall-info-am
 
 .PHONY: all all-am check check-am clean clean-generic distclean \
 	distclean-generic distdir dvi dvi-am html html-am info info-am \
 	install install-am install-data install-data-am install-exec \
-	install-exec-am install-helpDATA install-info install-info-am \
-	install-man install-strip installcheck installcheck-am \
-	installdirs maintainer-clean maintainer-clean-generic \
-	mostlyclean mostlyclean-generic pdf pdf-am ps ps-am uninstall \
-	uninstall-am uninstall-helpDATA uninstall-info-am
+	install-exec-am install-info install-info-am install-man \
+	install-strip installcheck installcheck-am installdirs \
+	maintainer-clean maintainer-clean-generic mostlyclean \
+	mostlyclean-generic pdf pdf-am ps ps-am uninstall uninstall-am \
+	uninstall-info-am
 
+#bin_SCRIPTS = $(TCLKITRUN)
 
-Copying.hh : ../COPYING
-	echo '0 Copying' | cat - ../COPYING >Copying.hh
+tclkit${BEXEEXT}: $(TCLKITBSRC) $(top_builddir)/config.status
+	cp $(srcdir)/$(TCLKITBSRC) ./tclkit${BEXEEXT}
 
-Warranty.hh : ../COPYING
-	echo '0 Warranty' > Warranty.hh
-	sed '1,/of promoting the sharing and reuse of software generally./d' \
-		../COPYING | \
-	sed '/How to Apply These Terms to Your New Programs/,999d' >>Warranty.hh
-
-Version.hh : $(top_srcdir)/configure
-	echo '0 Version' > Version.hh
-	echo 'This is $(PACKAGE_STRING), Copyright 2006 by Robert Heller D/B/A Deepwoods Software.' >>Version.hh
-	echo 'See <Copying> for complete copyright information.'  >>Version.hh
-
-$(HelpIndex): $(HelpFiles) $(GeneratedHelpFiles)
-	$(HOSTTCLSH) $(HelpIndexBuilder) $(HelpIndex) $(HelpFiles) \
-		$(GeneratedHelpFiles)
-
-$(IndexHH) : $(HelpIndex) $(HelpFiles) $(GeneratedHelpFiles)
-	$(HOSTTCLSH) $(IndexHHBuilder) $(HelpIndex) $(IndexHH) $(HelpFiles) \
-		$(GeneratedHelpFiles)
-
-$(top_srcdir)/configure: $(top_srcdir)/configure.ac
-	$(MAKE) -C $(top_srcdir) configure
+FORCE:
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

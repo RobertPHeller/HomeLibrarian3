@@ -871,7 +871,7 @@ namespace eval Search {
 		       -command [list destroy $self] \
 		       -default active
       $buttons add -name help -text {Help} \
-		       -command "BWHelp::HelpTopic MoreInfoWindow"
+		       -command [list HTMLHelp::HTMLHelp help {More Info Window}]
       $self configurelist $args
     }
   }

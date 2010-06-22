@@ -49,7 +49,6 @@
 
 package require snit
 package require BWidget
-package require BWHelp
 package require BWStdMenuBar
 
 snit::widgetadaptor mainwindow {
@@ -81,15 +80,13 @@ snit::widgetadaptor mainwindow {
 	    "&Options" {options:menu} {options} 0 {
 	    }
 	    "&Help" {help:menu} {help} 0 {
-		{command "On &Context..." {help:context} "Help on context" {} -command BWHelp::HelpContext}
-		{command "On &Help..." {help:help} "Help on help" {} -command "BWHelp::HelpTopic Help"}
-		{command "On &Window..." {help:window} "Help on the current window" {} -command "BWHelp::HelpWindow"}
-		{command "On &Keys..." {help:keys} "Help on keyboard accelerators" {} -command "BWHelp::HelpTopic Keys"}
-		{command "&Index..." {help:index} "Help index" {} -command "BWHelp::HelpTopic Index"}
-		{command "&Tutorial..." {help:tutorial} "Tutorial" {}  -command "BWHelp::HelpTopic Tutorial"}
-		{command "On &Version" {help:version} "Version" {} -command "BWHelp::HelpTopic Version"}
-		{command "Warranty" {help:warranty} "Warranty" {} -command "BWHelp::HelpTopic Warranty"}
-		{command "Copying" {help:copying} "Copying" {} -command "BWHelp::HelpTopic Copying"}
+		{command "On &Help..." {help:help} "Help on help" {}}
+		{command "On &Keys..." {help:keys} "Help on keyboard accelerators" {}}
+		{command "&Index..." {help:index} "Help index" {}}
+		{command "&Tutorial..." {help:tutorial} "Tutorial" {}}
+		{command "On &Version" {help:version} "Version" {}}
+		{command "Warranty" {help:warranty} "Warranty" {}}
+		{command "Copying" {help:copying} "Copying" {}}
 	    }
 	}
   option {-extramenus extraMenus ExtraMenus} \

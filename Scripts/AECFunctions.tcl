@@ -436,7 +436,7 @@ namespace eval AmazonECommerce {
 		-command [list destroy $self] \
 		-default active
       $buttons add -name help -text {Help} \
-		-command "BWHelp::HelpTopic ViewAmazonData"
+		-command [list HTMLHelp::HTMLHelp help {View Amazon Data}]
       $self configurelist $args
       AmazonECommerce::GetAmazonData "$options(-url)" [mymethod _FillInData]
     }

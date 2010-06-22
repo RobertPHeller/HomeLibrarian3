@@ -13,10 +13,10 @@
 # PARTICULAR PURPOSE.
 
 @SET_MAKE@
+
 srcdir = @srcdir@
 top_srcdir = @top_srcdir@
 VPATH = @srcdir@
-pkgdatadir = $(datadir)/@PACKAGE@
 pkglibdir = $(libdir)/@PACKAGE@
 pkgincludedir = $(includedir)/@PACKAGE@
 top_builddir = ..
@@ -33,6 +33,9 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
+build_triplet = @build@
+host_triplet = @host@
+target_triplet = @target@
 subdir = Documentation
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -43,24 +46,38 @@ mkinstalldirs = $(install_sh) -d
 CONFIG_CLEAN_FILES =
 SOURCES =
 DIST_SOURCES =
+am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
+am__vpath_adj = case $$p in \
+    $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
+    *) f=$$p;; \
+  esac;
+am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
+am__installdirs = "$(DESTDIR)$(pkgdatadir)"
+pkgdataDATA_INSTALL = $(INSTALL_DATA)
+DATA = $(noinst_DATA) $(pkgdata_DATA)
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
+pkgdatadir = $(datadir)/$(PACKAGE)/Doc
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
 AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
 AWK = @AWK@
+BEXEEXT = @BEXEEXT@
 BIBTEX = @BIBTEX@
 BUILD_DIR = @BUILD_DIR@
 BWLIB = @BWLIB@
 CYGPATH_W = @CYGPATH_W@
 DEFS = @DEFS@
+DOXYGEN = @DOXYGEN@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
+EXEEXT = @EXEEXT@
 HOSTTCLSH = @HOSTTCLSH@
 HTLATEX = @HTLATEX@
 HTTPLIB = @HTTPLIB@
+IMG_ZIP = @IMG_ZIP@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
@@ -78,14 +95,15 @@ PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 PDFLATEX = @PDFLATEX@
-SDX = @SDX@
+SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
-TCLKIT = @TCLKIT@
+TCLKITBSRC = @TCLKITBSRC@
 TCLKITRUN = @TCLKITRUN@
-TCLXMLLIB = @TCLXMLLIB@
+TCLXML_ZIP = @TCLXML_ZIP@
 TOP_DIR = @TOP_DIR@
+UNZIP = @UNZIP@
 URILIB = @URILIB@
 VERSION = @VERSION@
 ac_ct_STRIP = @ac_ct_STRIP@
@@ -93,10 +111,18 @@ am__leading_dot = @am__leading_dot@
 am__tar = @am__tar@
 am__untar = @am__untar@
 bindir = @bindir@
+build = @build@
 build_alias = @build_alias@
+build_cpu = @build_cpu@
+build_os = @build_os@
+build_vendor = @build_vendor@
 datadir = @datadir@
 exec_prefix = @exec_prefix@
+host = @host@
 host_alias = @host_alias@
+host_cpu = @host_cpu@
+host_os = @host_os@
+host_vendor = @host_vendor@
 includedir = @includedir@
 infodir = @infodir@
 install_sh = @install_sh@
@@ -111,8 +137,29 @@ program_transform_name = @program_transform_name@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
+target = @target@
 target_alias = @target_alias@
-all: all-am
+target_cpu = @target_cpu@
+target_os = @target_os@
+target_vendor = @target_vendor@
+USERMAN_TEXS = UserManual.tex Preface.tex Introduction.tex Reference.tex \
+		Tutorial.tex Help.tex COPYING.tex MyTitlepage.sty \
+		titlepage.tex
+
+USERMAN_FIGS = 
+USERMAN = UserManual
+USERMAN_PDF = $(USERMAN).pdf
+USERMANHBase = UserManual
+USERMAN_HTML = $(USERMANHBase)/$(USERMAN).html
+EXTRA_DIST = $(USERMAN_TEXS) $(USERMAN_FIGS)
+pkgdata_DATA = $(USERMAN_PDF) 
+noinst_DATA = $(USERMAN_HTML)
+CLEANFILES = UserManual.pdf *.aux *.bbl *.blg *.idx *.ilg \
+	*.ind *.lof *.lot *.lol *.toc *.css UserManual
+
+BUILT_SOURCES = $(USERMAN)_Version.tex
+all: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) all-am
 
 .SUFFIXES:
 $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
@@ -145,6 +192,23 @@ $(top_srcdir)/configure:  $(am__configure_deps)
 $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 uninstall-info-am:
+install-pkgdataDATA: $(pkgdata_DATA)
+	@$(NORMAL_INSTALL)
+	test -z "$(pkgdatadir)" || $(mkdir_p) "$(DESTDIR)$(pkgdatadir)"
+	@list='$(pkgdata_DATA)'; for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  f=$(am__strip_dir) \
+	  echo " $(pkgdataDATA_INSTALL) '$$d$$p' '$(DESTDIR)$(pkgdatadir)/$$f'"; \
+	  $(pkgdataDATA_INSTALL) "$$d$$p" "$(DESTDIR)$(pkgdatadir)/$$f"; \
+	done
+
+uninstall-pkgdataDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(pkgdata_DATA)'; for p in $$list; do \
+	  f=$(am__strip_dir) \
+	  echo " rm -f '$(DESTDIR)$(pkgdatadir)/$$f'"; \
+	  rm -f "$(DESTDIR)$(pkgdatadir)/$$f"; \
+	done
 tags: TAGS
 TAGS:
 
@@ -180,10 +244,15 @@ distdir: $(DISTFILES)
 	  fi; \
 	done
 check-am: all-am
-check: check-am
-all-am: Makefile
+check: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) check-am
+all-am: Makefile $(DATA)
 installdirs:
-install: install-am
+	for dir in "$(DESTDIR)$(pkgdatadir)"; do \
+	  test -z "$$dir" || $(mkdir_p) "$$dir"; \
+	done
+install: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) install-am
 install-exec: install-exec-am
 install-data: install-data-am
 uninstall: uninstall-am
@@ -200,6 +269,7 @@ install-strip:
 mostlyclean-generic:
 
 clean-generic:
+	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
 
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
@@ -207,6 +277,7 @@ distclean-generic:
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
+	-test -z "$(BUILT_SOURCES)" || rm -f $(BUILT_SOURCES)
 clean: clean-am
 
 clean-am: clean-generic mostlyclean-am
@@ -225,7 +296,9 @@ info: info-am
 
 info-am:
 
-install-data-am:
+install-data-am: install-pkgdataDATA
+	@$(NORMAL_INSTALL)
+	$(MAKE) $(AM_MAKEFLAGS) install-data-hook
 
 install-exec-am:
 
@@ -251,17 +324,64 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-info-am
+uninstall-am: uninstall-info-am uninstall-pkgdataDATA
+	@$(NORMAL_INSTALL)
+	$(MAKE) $(AM_MAKEFLAGS) uninstall-hook
 
 .PHONY: all all-am check check-am clean clean-generic distclean \
 	distclean-generic distdir dvi dvi-am html html-am info info-am \
-	install install-am install-data install-data-am install-exec \
-	install-exec-am install-info install-info-am install-man \
-	install-strip installcheck installcheck-am installdirs \
-	maintainer-clean maintainer-clean-generic mostlyclean \
-	mostlyclean-generic pdf pdf-am ps ps-am uninstall uninstall-am \
-	uninstall-info-am
+	install install-am install-data install-data-am \
+	install-data-hook install-exec install-exec-am install-info \
+	install-info-am install-man install-pkgdataDATA install-strip \
+	installcheck installcheck-am installdirs maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-generic pdf \
+	pdf-am ps ps-am uninstall uninstall-am uninstall-hook \
+	uninstall-info-am uninstall-pkgdataDATA
 
+$(USERMAN)_Version.tex : $(top_builddir)/config.status
+	echo '\chapter*{Version}'	       >$(USERMAN)_Version.tex
+	echo '\addcontentsline{toc}{chapter}{Version}' \
+						>>$(USERMAN)_Version.tex
+	echo "System version is $(VERSION).\\\\" >>$(USERMAN)_Version.tex
+
+$(USERMAN_PDF) : $(USERMAN_TEXS) $(USERMAN_FIGS) \
+	$(USERMAN)_Version.tex 
+	for f in $(USERMAN_TEXS) $(USERMAN_FIGS); do \
+	    if test -f "./$$f"; then continue; else ln -s $(srcdir)/$$f ./; fi; \
+	done
+	$(PDFLATEX) $(USERMAN)
+	echo '\begin{theindex}' > $(USERMAN).ind
+	echo '\item Dummy, 0' >> $(USERMAN).ind
+	echo '\end{theindex}' >> $(USERMAN).ind
+	$(PDFLATEX) $(USERMAN)
+	$(MAKEINDEX) $(USERMAN).idx
+	$(PDFLATEX) $(USERMAN)
+
+$(USERMAN_HTML) : $(USERMAN_PDF)
+	-rm -rf $(USERMANHBase)
+	-mkdir $(USERMANHBase)
+	$(HTLATEX) $(USERMAN) "html,2,info" "" "-d$(USERMANHBase)/"
+	(cd $(USERMANHBase)&&ln -s ../*.png ./)
+	-rm -f zz$(USERMAN).p* $(USERMAN).4ct $(USERMAN).xref \
+		 $(USERMAN).4tc tex4ht.fls $(USERMAN).tmp $(USERMAN).lg \
+		 $(USERMAN).idv $(USERMAN).dvi $(USERMAN)*.html
+
+install-data-hook: $(USERMAN_HTML)
+	$(INSTALL) -d $(DESTDIR)$(pkgdatadir)/$(USERMANHBase)
+	for p in $(USERMANHBase)/*; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  f=$(am__strip_dir) \
+	  echo " $(pkgdataDATA_INSTALL) '$$d$$p' '$(DESTDIR)$(pkgdatadir)/$(USERMANHBase)$$f'"; \
+	  $(pkgdataDATA_INSTALL) "$$d$$p" "$(DESTDIR)$(pkgdatadir)/$(USERMANHBase)/$$f"; \
+	done
+
+uninstall-hook: 
+	for p in $(DESTDIR)$(pkgdatadir)/$(USERMANHBase)/*; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  f=$(am__strip_dir) \
+	  echo " rm -f '$(DESTDIR)$(pkgdatadir)/$(USERMANHBase)$$f'"; \
+	  rm -f "$(DESTDIR)$(pkgdatadir)/$(USERMANHBase)/$$f"; \
+	done
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

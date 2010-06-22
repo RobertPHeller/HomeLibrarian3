@@ -3,10 +3,7 @@
 #* MakePkgIndex.tcl - Make pkgIndex.tcl file in a kit library dir
 #* Created by Robert Heller on Wed Jan 10 14:31:26 2007
 #* ------------------------------------------------------------------
-#* Modification History: $Log: MakePkgIndex.tcl,v $
-#* Modification History: Revision 1.1  2007/09/29 14:17:57  heller
-#* Modification History: 3.0b1 Lockdown
-#* Modification History:
+#* Modification History: $Log$
 #* Modification History: Revision 1.1  2007/02/01 20:00:51  heller
 #* Modification History: Lock down for Release 2.1.7
 #* Modification History:
