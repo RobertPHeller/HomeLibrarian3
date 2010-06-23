@@ -556,7 +556,7 @@ namespace eval Database {
 #	  puts stderr "*** $self _DoSearch: duplicate key = $key"
 #	  continue
 #	}
-	$resultlb insert end $key -data "$key" -text "$elementText"
+	$resultlb insert end $key -data "$row(Key)" -text "$elementText"
 	incr rcount
       }
       if {$rcount == 0} {

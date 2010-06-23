@@ -1,7 +1,8 @@
 USERMAN_TEXS = UserManual.tex Preface.tex Introduction.tex Reference.tex \
 		Tutorial.tex Help.tex COPYING.tex MyTitlepage.sty \
 		titlepage.tex
-USERMAN_FIGS = MainWindow.png CardCatDrawer.png
+USERMAN_FIGS = MainWindow.png CardCatDrawer.png MainWindowAnnotated.pdf \
+		SearchWindowAnnotated.pdf
 
 USERMAN = UserManual
 USERMAN_PDF = $(USERMAN).pdf
