@@ -277,7 +277,7 @@ proc Database::ConnectToDatabase {} {
   set Environment database
   Windows::HideSplash {
     while {1} {
-      puts stderr "*** Database::ConnectToDatabase (top of while loop): ConnectionString = '$ConnectionString'"
+#      puts stderr "*** Database::ConnectToDatabase (top of while loop): ConnectionString = '$ConnectionString'"
       if {[string equal "$ConnectionString" {}]} {
         set ConnectionString [GetConnectionString $Environment]
         if {[string equal "$ConnectionString" {}]} {
@@ -287,13 +287,13 @@ proc Database::ConnectToDatabase {} {
       set connCmd [list $Environment connect [gensym conn] "$ConnectionString"]
       if {[catch "$connCmd" Connection]} {
         global errorInfo
-        puts stderr "*** Database::ConnectToDatabase: $Connection: $errorInfo"
+#        puts stderr "*** Database::ConnectToDatabase: $Connection: $errorInfo"
         tk_messageBox -type ok -icon error -message "$Connection"
         set Connection {}
         set ConnectionString {}
         continue
       }
-      puts stderr "*** Database::ConnectToDatabase: Connection = '$Connection'"
+#      puts stderr "*** Database::ConnectToDatabase: Connection = '$Connection'"
       if {![HaveData]} {
 	if {[AskCreateTables]} {
 	  New 1
@@ -307,7 +307,7 @@ proc Database::ConnectToDatabase {} {
         break
       }
     }
-    puts stderr "*** Database::ConnectToDatabase (after while): ConnectionString = '$ConnectionString', Connection = '$Connection'"
+#    puts stderr "*** Database::ConnectToDatabase (after while): ConnectionString = '$ConnectionString', Connection = '$Connection'"
     if {![HaveData]} {
       tk_messageBox -type ok -icon error \
 	-message "Could not make a connection to a database server, sorry!"
@@ -356,13 +356,13 @@ proc Database::CloseDatabase {} {
 }
   
 proc Database::HaveData {} {
-  puts stderr "*** Database::HaveData"
+#  puts stderr "*** Database::HaveData"
   variable Connection
-  puts stderr "*** Database::HaveData: Connection = '$Connection'"
+#  puts stderr "*** Database::HaveData: Connection = '$Connection'"
   if {[string equal "$Connection" {}]} {return no}
 
   set c [$Connection tables cards]
-  puts stderr "*** Database::HaveData: c = '$c'"
+#  puts stderr "*** Database::HaveData: c = '$c'"
   if {[llength $c] < 1} {
     return no
   } else {
@@ -529,7 +529,8 @@ namespace eval Database {
 	Keyword {
 	  if {[string equal "$CardByKeyword" {}]} {
 	    set CardByKeyword [$Connection statement [Database::gensym stmt] \
-		{select distinct * from cards where cards.key = keywords.key 
+		{select distinct cards.* from cards,keywords where 
+						    cards.key = keywords.key 
 						AND keywords.keyword LIKE ?} \
 		{CHAR}]
 	  }
@@ -544,13 +545,18 @@ namespace eval Database {
 				 Category Media Publisher PubLocation PubDate 
 				 Edition ISBN}]} {
 #	parray row
-	set elementText "$row(Key): "
+ 	set key "[string trim $row(Key)]"
+	set elementText "$key: "
 	if {![string equal "$field" {}]} {
 	  append elementText [string trim "$row($field)"]
 	  append elementText { }
 	}
 	append elementText [string trim "$row(Title)"]
-	$resultlb insert end $row(Key) -data "$row(Key)" -text "$elementText"
+#	if {[$resultlb exists $key]} {
+#	  puts stderr "*** $self _DoSearch: duplicate key = $key"
+#	  continue
+#	}
+	$resultlb insert end $key -data "$key" -text "$elementText"
 	incr rcount
       }
       if {$rcount == 0} {

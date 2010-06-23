@@ -47,8 +47,22 @@ set httpV [package require http]
 set xmlV [package require xml]
 #puts stderr "*** AECFunctions: loaded xml $xmlV"
 
+# Missing function...
+namespace eval ::http {}
+proc ::http::location {token} {
+  upvar 0 $token state
+  set locI [lsearch -exact $state(meta) Location]
+  if {$locI < 0} {
+    return {}
+  } else {
+    return [lindex $state(meta) [expr {$locI + 1}]]
+  }
+}
+  
+
 namespace eval AmazonECommerce {
   variable BaseURL {http://webservices.amazon.com/onca/xml?Service=AWSECommerceService}
+  variable SignerURL {http://www.deepsoft.com/AWS/index.cgi?}
   variable AWSHost {ecs.amazonaws.com}
   variable AWSURL  {/onca/xml}
   variable AWSService {AWSECommerceService}
@@ -85,37 +99,30 @@ namespace eval AmazonECommerce {
       regsub -all {\?} $in "%3f" in
       return $in
     }
-    method _aws_sign_string {string_to_sign} {
-#      base64_encode(hash_hmac("sha256", $string_to_sign, $private_key, True));
-       
-    }
-      
     method _FormItemSearchRequest {searchIndex keywords} {
-      set URL "$AmazonECommerce::BaseURL"
       set keywords [$self _URLEncode "$keywords"]
-      set params = [list Service=$AmazonECommerce::AWSService \
-			 Timestamp=[clock format [clock scan now] -format {%Y-%m-%dT%H:%i:%sZ} -gmt] \
-			 Version=2009-03-31]
+      set params [list Service=$AmazonECommerce::AWSService \
+			 EndpointUri=$AmazonECommerce::AWSHost$AmazonECommerce::AWSURL]
       lappend params "AWSAccessKeyId=$AmazonECommerce::DWSAccessKeyID"
       lappend params "Operation=ItemSearch"
       lappend params "SearchIndex=$searchIndex"
       lappend params "Keywords=$keywords"
       lappend params "ResponseGroup=Small"
-      set params [lsort $params]
       set query [join $params {&}]
-      set string_to_sign "get\n$AmazonECommerce::AWSHost\n$AmazonECommerce::AWSURL\n$query"
-      set sig [$self _aws_sign_string $string_to_sign]
-      set URL "http://$AmazonECommerce::AWSHost$AmazonECommerce::AWSURL?$query&Signature=$sig"
-      puts "*** $self _FormItemSearchRequest: URL = $URL"
+      set URL "$AmazonECommerce::SignerURL$query"
+#      puts "*** $self _FormItemSearchRequest: URL = $URL"
       return "$URL"
     }
     method _FormItemLookupRequest {itemid} {
-      set URL "$AmazonECommerce::BaseURL"
-      append URL "&AWSAccessKeyId=$AmazonECommerce::DWSAccessKeyID"
-      append URL "&Operation=ItemLookup"
-      append URL "&ItemId=$itemid"
-      append URL "&ResponseGroup=Small"
-      puts "*** $self _FormItemLookupRequest: URL = $URL"
+      set params [list Service=$AmazonECommerce::AWSService \
+			 EndpointUri=$AmazonECommerce::AWSHost$AmazonECommerce::AWSURL]
+      lappend params "AWSAccessKeyId=$AmazonECommerce::DWSAccessKeyID"
+      lappend params "Operation=ItemLookup"
+      lappend params "ItemId=$itemid"
+      lappend params "ResponseGroup=Small"
+      set query [join $params {&}]
+      set URL "$AmazonECommerce::SignerURL$query"
+#      puts "*** $self _FormItemLookupRequest: URL = $URL"
       return "$URL"
     }
     method viewItem {{parent .}} {
@@ -127,11 +134,15 @@ namespace eval AmazonECommerce {
     method formSelectedItemResponseGroupURL {responseGroup} {
       set selecteditems [$resultsLB selection get]
       if {[llength $selecteditems] < 1} {return {}}
-      set URL "$AmazonECommerce::BaseURL"
-      append URL "&AWSAccessKeyId=$AmazonECommerce::DWSAccessKeyID"
-      append URL "&Operation=ItemLookup"
-      append URL "&ItemId=[join $selecteditems {,}]"
-      append URL "&ResponseGroup=$responseGroup"
+      set params [list Service=$AmazonECommerce::AWSService \
+			 EndpointUri=$AmazonECommerce::AWSHost$AmazonECommerce::AWSURL]
+      lappend params "AWSAccessKeyId=$AmazonECommerce::DWSAccessKeyID"
+      lappend params "Operation=ItemLookup"
+      lappend params "ItemId=[join $selecteditems {,}]"
+      lappend params "ResponseGroup=$responseGroup"
+      set query [join $params {&}]
+      set URL "$AmazonECommerce::SignerURL$query"
+#      puts "*** $self formSelectedItemResponseGroupURL: URL = $URL"
       return "$URL"
     }
 
@@ -142,6 +153,13 @@ namespace eval AmazonECommerce {
       if {[catch {
       set token [::http::geturl "$URL" -blocksize 2048 \
 					-progress [mymethod _UpdateIdle]]
+      while {[::http::ncode $token] == 301 || [::http::ncode $token] == 302} {
+	set URL [::http::location $token]
+#	puts "*** $self _DoSearch: redirected URL is $URL"
+	::http::cleanup $token
+	set token [::http::geturl "$URL" -blocksize 2048 \
+					-progress [mymethod _UpdateIdle]]
+      }
       switch [::http::status $token] {
 	ok {	
 	    $resultsLB delete [$resultsLB items]
@@ -223,6 +241,13 @@ namespace eval AmazonECommerce {
       if {[catch {
       set token [::http::geturl "$URL" -blocksize 2048 \
 					-progress [mymethod _UpdateIdle]]
+      while {[::http::ncode $token] == 301 || [::http::ncode $token] == 302} {
+	set URL [::http::location $token]
+#	puts "*** $self _DoLookup: redirected URL is $URL"
+	::http::cleanup $token
+	set token [::http::geturl "$URL" -blocksize 2048 \
+					-progress [mymethod _UpdateIdle]]
+      }
       switch [::http::status $token] {
 	ok {	
 	    $resultsLB delete [$resultsLB items]
@@ -374,6 +399,13 @@ namespace eval AmazonECommerce {
     method process {} {
       set token [::http::geturl "$options(-url)" -blocksize 2048 \
 				-progress [mymethod _UpdateIdle]]
+      while {[::http::ncode $token] == 301 || [::http::ncode $token] == 302} {
+	set URL [::http::location $token]
+#	puts "*** $self process: redirected URL is $URL"
+	::http::cleanup $token
+	set token [::http::geturl "$URL" -blocksize 2048 \
+					-progress [mymethod _UpdateIdle]]
+      }
       switch [::http::status $token] {
 	ok {
 	     set parser [::xml::parser \
