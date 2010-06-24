@@ -74,14 +74,14 @@ proc Search::SearchPane {} {
   set notebookbb [ButtonBox::create $notes.notebookbb -orient horizontal \
 		    -homogeneous no]
   pack $notebookbb -fill x
-  $notebookbb add -name print -text {Print Note Book} \
+  $notebookbb add -name print -text {Print Notepad} \
 		  -command {Print::PrintText \
 				"[$Search::MainSearchNoteBook get 1.0 end-1c]" \
 				-title "Printing notebook" \
 				-pstitle "Home Librarian Search Notebook"}
-  $notebookbb add -name save -text {Save Note Book} \
+  $notebookbb add -name save -text {Save Notepad} \
 		  -command Search::SaveNoteBook
-  $notebookbb add -name clear -text {Clear Note Book} \
+  $notebookbb add -name clear -text {Clear Notepad} \
 		  -command {$Search::MainSearchNoteBook delete 1.0 end}
   update idle
   $sfpaneW paneconfigure notes -minsize [winfo reqheight $notes]

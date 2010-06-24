@@ -540,7 +540,7 @@ namespace eval Database {
       }
       $Windows::AnimatedHeader StartWorking
       set rcount 0
-      $search execute [list "$string%"]
+      $search execute [list "$string"]
       while {[$search fetch row {Key Title Author Subject Description Location 
 				 Category Media Publisher PubLocation PubDate 
 				 Edition ISBN}]} {

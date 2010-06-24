@@ -113,11 +113,28 @@ menu item as well, along with some additional operations.
 \end{centering}
 \end{figure}
 The Search function version of the Main GUI Window is shown in
-Figure~\ref{fig:ref:searchwindowAnno}. This version of the main window has
-a place for entering a search pre x string, a set of search index
-selection buttons, a search results list box, a set of search results
+Figure~\ref{fig:ref:searchwindowAnno}. This version of the main window
+has a dropdown menu to select the search mode, a place for entering a
+search string, a search results list box, a set of search results
 disposition buttons, a notepad (text) area for making notes, and a set
-of overall control buttons.
+of buttons to manage the notepad area. 
+
+\subsection{Types of searches}
+
+There are four types of searches, by title, by author, by subject, and
+by keyword. The search strings are considered SQL ``LIKE'' patterns. 
+Like patterns use two wildcard characters: ``\%'', which matches any
+zero or more characters and ``\_'' which matches exactly one character. 
+The four search fields are stored in the database as all uppercase and
+the search string is itself converted to upper case, so the search is
+always performed in a case insensitive manor. 
+
+\subsection{Search results and what to do with them}
+
+The search results are displayed as a list below the search string. 
+These list elements can be selected and either added to the notepad
+area (and then printed or saved as a text file) or more information
+(the complete card record) can be requested.  
 
 
 \section{Updating a database (card catelog)}
