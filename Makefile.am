@@ -12,6 +12,9 @@ EXTRA_DIST = bootstrap snodbc.kit Doxyfile.in Doxyfile
 SDX = $(top_srcdir)/BuildScripts/sdx.kit
 TCLKIT = $(top_builddir)/BuildData/tclkit${BEXEEXT}
 
+man_MANS = man1/HL3.1
+
+
 HL3$(EXEEXT) : Scripts/HL3.src $(LibraryScripts) \
 		$(top_srcdir)/snodbc.kit $(AllImages) $(AllHelpDep)
 	-rm -f  HL3.kit

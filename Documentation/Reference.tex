@@ -81,7 +81,7 @@ displayed, as shown in Figure~\ref{fig:ref:headerAnimation}.
 
 \begin{figure}[hpt]
 \begin{centering}
-\includegraphics{MainWindowAnnotated.pdf}
+\includegraphics[width=5in]{MainWindowAnnotated.png}
 \caption{Main Window, annotated.}
 \label{fig:ref:mainwindowAnno}
 \end{centering}
@@ -107,7 +107,7 @@ menu item as well, along with some additional operations.
 
 \begin{figure}[hpt]
 \begin{centering}
-\includegraphics[width=5in]{SearchWindowAnnotated.pdf}
+\includegraphics[width=5in]{SearchWindowAnnotated.png}
 \caption{Search Window, annotated.}
 \label{fig:ref:searchwindowAnno}
 \end{centering}
@@ -120,6 +120,7 @@ disposition buttons, a notepad (text) area for making notes, and a set
 of buttons to manage the notepad area. 
 
 \subsection{Types of searches}
+\label{sect:ref:searchtypes}
 
 There are four types of searches, by title, by author, by subject, and
 by keyword. The search strings are considered SQL ``LIKE'' patterns. 
@@ -136,11 +137,56 @@ These list elements can be selected and either added to the notepad
 area (and then printed or saved as a text file) or more information
 (the complete card record) can be requested.  
 
+\subsection{The notepad area}
+
+The notepad area below the search results can be used to save selected
+result items and its contents can be printed, saved as a text file, or
+cleared.
 
 \section{Updating a database (card catelog)}
 \label{sect:ref:update}
 
+\begin{figure}[hpt]
+\begin{centering}
+\includegraphics[width=5in]{UpdateWindowAnnotated.png}
+\caption{Update Window, annotated.}
+\label{fig:ref:updatewindowAnno}
+\end{centering}
+\end{figure}
+The Update function version of the Main GUI Window is shown in
+Figure~\ref{fig:ref:updatewindowAnno}.  This version of the main window
+has a place to enter a card key to edit, a dropdown menu to select the
+search mode, a place for entering a search string, a search results
+list box, a set of search results disposition buttons, and an Amazon search
+pane to get Amazon information about items in your library.
 
+\subsection{Editing a card by its key}
+Entering a card key and clicking on \verb=Edit Card= will edit either
+an existing card (if the key is in use) or create a new card (if the
+key is not in use). The card editor window is shown in
+Figure~\ref{fig:ref:editcardAnno}. If this is a new card, the ``Get New
+Card Template Or Amazon URL Dialog'', described in
+Section~\ref{sect:ref:newcardtempl} is displayed. See
+Section~\ref{sect:ref:editcard} for more information about the card
+editor window.
+
+\subsection{Editing a card by searching for it}
+A search can be performed to find a card to edit. The searching is much
+the same as described in Section~\ref{sect:ref:searchtypes}. Cards found
+by searching can be either edited or deleted.
+
+\subsection{Searching Amazon's database}
+
+Amazon's huge database of books, audio tapes, CDs, video tapes, and
+DVDs can be searched with the lower half of the update window.  Result
+elements can be used to create new cards or used to provide information
+for existing cards.  Amazon's database can be searched  entering search
+terms and selecting what type of items to look for, this includes
+books, music, video, CDs, and DVDs.  It is also possible to use an ISBN
+or ASIN to look up a specific item.  The search results are listed below
+the search entries and these items can be selected and used to create a
+new card or to just view the information in a new window (see
+Section~\ref{sect:ref:viewamazondata}).
 
 \section{Dialog Boxes}
 \subsection{Get Connection String Dialog}
@@ -156,10 +202,37 @@ This dialog box selects a template card.
 \subsection{Edit Template}
 This window edits a template card.
 \subsection{Edit Card}
-This window edits a card record.
+\label{sect:ref:editcard}
+\begin{figure}[hpt]
+\begin{centering}
+\includegraphics[width=5in]{EditCardAnnotated.png}
+\caption{Edit Card Window, annotated.}
+\label{fig:ref:editcardAnno}
+\end{centering}
+\end{figure}
+The card editor window, shown in Figure~\ref{fig:ref:editcardAnno},
+contains a collection of basic informational fields in its upper
+section, with a field containing descriptive text.  Near the bottom is
+a section containing the keywords associated with this card, along with
+a set of controls for adding and deleting keywords.  At the very bottom
+are buttons for saving the card, dismissing the card editor, and for
+getting help.
+
+The short fields in the upper section are a standard collection of
+information fields, including the card identifcation (its unique key),
+title, the author, the subject, the location, the category, the media,
+the publisher, the edition, and the ISBN or ASIN of the item.  Except
+for the identifcation field, all of the fields can be edited.  The
+title, author, and subject fields are converted to all upper case
+letters for easy searching. The descriptive text is free form text that
+describes the item. The keywords can be any usefull search terms of
+your choosing. Keywords can be added or deleted.  The keywords are
+converted to all uppercase letters for easy searching.
+
 \subsection{Get New Key Dialog}
 This dialog box gets a new key.
 \subsection{Get New Card Template Or Amazon URL Dialog}
+\label{sect:ref:newcardtempl}
 This dialog selects either a template or gets data from Amazon to initialize 
 a new card.
 \subsection{Import Dialog}
@@ -188,5 +261,6 @@ This window provides for editing a card layout.
 This window shows the print progress of either text output or cards.
 \subsection{More Info Window}
 This window shows more information about a selected card.
-
+\subsection{View Amazon Data}
+\label{sect:ref:viewamazondata}
 

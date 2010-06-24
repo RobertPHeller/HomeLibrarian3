@@ -18,7 +18,7 @@ AC_CONFIG_SRCDIR(Scripts/HL3.src)
 AM_INIT_AUTOMAKE(HomeLibrarian,3.0b3)
 
 AC_CONFIG_FILES([Makefile Images/Makefile Scripts/Makefile Documentation/Makefile 
-		 BuildScripts/Makefile BuildData/Makefile])
+		 BuildScripts/Makefile BuildData/Makefile Doxyfile])
 
 if test "x${prefix}" = "xNONE"; then
     prefix=/usr/local

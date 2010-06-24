@@ -1,5 +1,40 @@
 #!=WISH=
 
+## @defgroup  HL3 HL3
+# @brief Manage a database for a home library.
+#
+# @section SYNOPSIS
+#
+# HL3 [X11 Resource Options]
+#
+# @section DESCRIPTION
+#
+# The <b>Home Librarian</b> package uses a database of "cards'" that
+# concisely describe items in your library, such as books, magazines,
+# records, and tapes. The cards contain information such as the title of
+# the item, the author (or performer) of the material, the publisher, the
+# date of publication, and so on. The cards can be search by their unique
+# keys, or by title, author, or subject.  There is also a keyword table
+# that associates keywords with cards.
+#
+# @subsection Database Structure
+#
+# Each card uses string of up to 36 characters as a unique key.
+# Cards are indexed by key, title, author, and subject. The keys, titles,
+# authors, and subjects are always compared in a case-insensitive
+# fashion.  That is, <tt>"The Door Into Summer"</tt> is the same as 
+# <tt>"THE DOOR INTO SUMMER"</tt>.  Internally, the keys, titles, authors, and
+# subjects are converted to all uppercase letters.  There is also a
+# keyword table that associates keywords (search terms) with each card.
+#
+# @section PARAMETERS
+#
+# None.
+#
+# @section AUTHOR
+# Robert Heller \<heller\@deepsoft.com\>
+
+
 set argv0 [info nameofexecutable]
 
 global imageDir

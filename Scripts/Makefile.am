@@ -1,5 +1,5 @@
 
-LibraryScripts = BWHelp.tcl labelselectcolor.tcl panedw.tcl fileentry.tcl \
+LibraryScripts = HTMLHelp.tcl labelselectcolor.tcl panedw.tcl fileentry.tcl \
                  labelspinbox.tcl splash.tcl labelcombobox.tcl mainwindow.tcl \
                  BWStdMenuBar.tcl AnimatedHeader.tcl SearchWindow.tcl \
 		 EditWindow.tcl DatabaseFunctions.tcl AECFunctions.tcl \

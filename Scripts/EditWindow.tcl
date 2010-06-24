@@ -504,8 +504,9 @@ proc Edit::EditPane {} {
   pack [Button::create $uf.ekframe.edit -text {Edit Card:} -width 10 \
 	-command {Edit::EditACardByKey "[$Edit::EditCardKeyString cget -text]"} \
 	-justify left -anchor w] -side left
-  pack [Entry::create $uf.ekframe.keystring -text {}] -side right -expand yes \
-							-fill x
+  pack [Entry::create $uf.ekframe.keystring -text {} \
+	-command {Edit::EditACardByKey "[$Edit::EditCardKeyString cget -text]"}] \
+		-side right -expand yes -fill x
   set EditCardKeyString $uf.ekframe.keystring
   set ufpaneW [PanedWindow::create $uf.ufpaneW -side right]
   pack $ufpaneW -expand yes -fill both
@@ -961,7 +962,7 @@ namespace eval Edit {
 			-parent [winfo toplevel $keywordsLB]]
 	if {![Database::InsertCard data $log]} {return}
 	if {![Database::InsertKeywordsForKey "$options(-key)" $keywords $log]} {return}
-	
+	set $options(-new) no
       } else {
         set log [Edit::EditUpdateLogDialog .updateLog%AUTO% \
 			-title "Updating card $options(-key)" \
@@ -1062,7 +1063,8 @@ namespace eval Edit {
       if {"$dialog" ne "" && [winfo exists $dialog]} {return}
       set dialog [Dialog::create .getNewCardTemplateOrAmazonURLDialog \
 			-class GetNewCardTemplateOrAmazonURLDialog \
-			-side bottom -bitmap questhead \
+			-bitmap questhead \
+			-homogeneous no \
 			-modal local -title "Get Template Or Amazon URL" \
 			-cancel 2]
       $dialog add -name oktemp -text {Use Template} -command [mytypemethod _OKTemp]

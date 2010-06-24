@@ -540,6 +540,8 @@ namespace eval Database {
       }
       $Windows::AnimatedHeader StartWorking
       set rcount 0
+      # Append a trailing % to handle trailing white space
+      if {[regexp {%$} "$string"] < 1} {append string {%}}
       $search execute [list "$string"]
       while {[$search fetch row {Key Title Author Subject Description Location 
 				 Category Media Publisher PubLocation PubDate 
