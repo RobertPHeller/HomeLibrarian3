@@ -1,0 +1,44 @@
+Fri Jun 25 13:57:42 2010
+
+DESCRIPTION
+===========
+
+The Home Librarian package uses a database of "cards" that concisely
+describe items in your library, such as books, magazines, records, and
+tapes. The cards contain information such as the title of the item, the
+author (or performer) of the material, the publisher, the date of
+publication, and so on. The cards can be search by their unique keys,
+or by title, author, or subject.  There is also a keyword table that
+associates keywords with cards.
+
+Database Structure
+------------------
+
+Each card uses string of up to 36 characters as a unique key. Cards are
+indexed by key, title, author, and subject. The keys, titles, authors,
+and subjects are always compared in a case-insensitive fashion.  That
+is, "The Door Into Summer" is the same as  "THE DOOR INTO SUMMER". 
+Internally, the keys, titles, authors, and subjects are converted to
+all uppercase letters.  There is also a keyword table that associates
+keywords (search terms) with each card.
+
+HISTORY
+=======
+
+This is the third incarnation of this project.  The first was
+collection of CLI / Termcap programs written in C++.  The second was a
+Tcl/Tk and C++ GUI hybrid program.  This third version is a pure Tcl/Tk
+GUI program, using a RDBMS backend.  This version is still early beta
+release.  Somethings are not yet working fully (the whole print
+sub-system needs a lot of work yet).
+
+AUTHOR
+======
+
+Robert Heller
+Deepwoods Software
+51 Locke Hill Road
+Wendell, MA 01379
+Phone: 978-544-6933
+E-Mail: heller@deepsoft.com
+Website: http://www.deepsoft.com/

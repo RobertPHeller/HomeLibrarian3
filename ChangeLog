@@ -1,0 +1,10 @@
+Fri Jun 25 14:05:12 2010
+
+   3.0b3 Released
+
+	Wrote the basic documentation.
+	Fixed a number of small bugs.
+	Updated the Amazon E-Commerce to sign its requests.
+	Added the ability to open another database once the program is up 
+	  and running.
+
