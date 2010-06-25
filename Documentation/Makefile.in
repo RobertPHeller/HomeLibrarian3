@@ -148,7 +148,11 @@ USERMAN_TEXS = UserManual.tex Preface.tex Introduction.tex Reference.tex \
 
 USERMAN_FIGS = MainWindow.png CardCatDrawer.png MainWindowAnnotated.png \
 		SearchWindowAnnotated.png UpdateWindowAnnotated.png \
-		EditCardAnnotated.png
+		EditCardAnnotated.png GetConnectionStringDialog.png \
+		GetConnectionStringDialogSQLite.png ReCreateDB.png \
+		AmazonSearchJavaNutshell.png EnterNewKey.png \
+		Java-Flanagan-1-Initial.png Java-Flanagan-1-Edited.png \
+		SearchKeywordJava.png MoreInformationJavaFlanagan1.png
 
 USERMAN = UserManual
 USERMAN_PDF = $(USERMAN).pdf

@@ -72,7 +72,7 @@ namespace eval Database {
   variable SelectWhere {}
 
   variable CardsTableSQL {
-Create Table Cards (
+Create Table cards (
   Key CHAR(36) NOT NULL,
   Title CHAR(128) NOT NULL,
   Author CHAR(64) NOT NULL,
@@ -86,15 +86,15 @@ Create Table Cards (
   PubDate DATE			,
   Edition CHAR(36)		,
   ISBN    CHAR(20) )}
-  variable KeyIndexSQL {Create Unique Index Key_index on Cards(Key)}
-  variable TitleIndexSQL {Create        Index Title_index on Cards(Title)}
-  variable AuthorIndexSQL {Create        Index Author_index on Cards(Author)}
-  variable SubjectIndexSQL {Create        Index Subject_index on Cards(Subject)}
+  variable KeyIndexSQL {Create Unique Index Key_index on cards(Key)}
+  variable TitleIndexSQL {Create        Index Title_index on cards(Title)}
+  variable AuthorIndexSQL {Create        Index Author_index on cards(Author)}
+  variable SubjectIndexSQL {Create        Index Subject_index on cards(Subject)}
   variable KeywordsTableSQL {
-Create Table Keywords (
+Create Table keywords (
   Keyword CHAR(64) NOT NULL,
   Key     CHAR(36) NOT NULL)}
-  variable KeywordIndexSQL {Create        Index Keyword_index on Keywords(Keyword)}
+  variable KeywordIndexSQL {Create        Index Keyword_index on keywords(Keyword)}
 
   snit::type GetConnectionStringDialog {
     pragma -hastypeinfo    no
@@ -270,10 +270,21 @@ proc Database::gensym {prefix} {
 }
 
 proc Database::ConnectToDatabase {} {
+  OpenDatabase [option get . connectionString ConnectionString]
+}
+
+proc Database::OpenDatabase {{connectionstring {}}} {
   variable ConnectionString
   variable Connection
   variable Environment
-  set ConnectionString [option get . connectionString ConnectionString]
+
+  if {"$ConnectionString" ne {}} {
+    set ans [tk_messageBox -type yesno -icon question\
+		-message "Do you really want to close the current database?"]
+    if {!$ans} {return}
+  }
+  CloseDatabase
+  set ConnectionString "$connectionstring"
   set Environment database
   Windows::HideSplash {
     while {1} {
@@ -380,9 +391,9 @@ proc Database::CountMatchingCards {whereclause} {
   variable Connection
 
   if {![string equal "$whereclause" {}]} {
-    set count [$Connection "select distinct count(*) from cards where $whereclause"]
+    set count [$Connection run "select distinct count(*) from cards where $whereclause"]
   } else {
-    set count [$Connection "select distinct count(*) from cards"]
+    set count [$Connection run "select distinct count(*) from cards"]
   }
   return [lindex $count 0]
 }

@@ -9,7 +9,7 @@
 #
 # @section DESCRIPTION
 #
-# The <b>Home Librarian</b> package uses a database of "cards'" that
+# The <b>Home Librarian</b> package uses a database of "cards" that
 # concisely describe items in your library, such as books, magazines,
 # records, and tapes. The cards contain information such as the title of
 # the item, the author (or performer) of the material, the publisher, the
@@ -17,7 +17,7 @@
 # keys, or by title, author, or subject.  There is also a keyword table
 # that associates keywords with cards.
 #
-# @subsection Database Structure
+# @subsection DatabaseStructure Database Structure
 #
 # Each card uses string of up to 36 characters as a unique key.
 # Cards are indexed by key, title, author, and subject. The keys, titles,
@@ -33,7 +33,11 @@
 #
 # @section AUTHOR
 # Robert Heller \<heller\@deepsoft.com\>
-
+#
+# @section SEEALSO See Also
+#
+# Be sure to read the full manual, available as a PDF file or as a HTML 
+# document.
 
 set argv0 [info nameofexecutable]
 
@@ -75,9 +79,9 @@ proc Windows::SplashWorkMessage {message percent} {
 }
 
 proc Windows::HideSplash {script} {
-  wm withdraw .hl3Splash
+  catch {wm withdraw .hl3Splash}
   catch {uplevel $script}
-  wm deiconify .hl3Splash
+  catch {wm deiconify .hl3Splash}
   update
 }
 
@@ -207,7 +211,7 @@ proc Windows::MainWindow {} {
 	-menu {
 	   "&File" {file:menu} {file} 0 {
 		{command "&New" {file:new db:havedb db:havewrite} "Create a new card catalog" {Ctrl n} -command Database::New -state disabled}
-		{command "&Open..." {} "" {} -state disabled}
+		{command "&Open..." {file:open} "Open another database" {Ctrl o} -command Database::OpenDatabase -state normal}
 		{command "&Save" {} "" {} -state disabled}
 		{command "Save &As..." {} "" {} -state disabled}
 		{command "&Print..." {db:havedb db:havewrite} "Print A Card Catalog" {Ctrl p} -command Print::CardCatalog -state disabled}
