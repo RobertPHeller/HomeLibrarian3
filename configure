@@ -1763,7 +1763,7 @@ am__tar='${AMTAR} chof - "$$tardir"'; am__untar='${AMTAR} xf -'
 
 
 
-                                                                      ac_config_files="$ac_config_files Makefile Images/Makefile Scripts/Makefile Documentation/Makefile BuildScripts/Makefile BuildData/Makefile Doxyfile"
+                                                                                ac_config_files="$ac_config_files Makefile Images/Makefile Scripts/Makefile Documentation/Makefile BuildScripts/Makefile BuildData/Makefile Doxyfile HomeLibrarian.spec"
 
 
 if test "x${prefix}" = "xNONE"; then
@@ -2857,6 +2857,7 @@ do
   "BuildScripts/Makefile" ) CONFIG_FILES="$CONFIG_FILES BuildScripts/Makefile" ;;
   "BuildData/Makefile" ) CONFIG_FILES="$CONFIG_FILES BuildData/Makefile" ;;
   "Doxyfile" ) CONFIG_FILES="$CONFIG_FILES Doxyfile" ;;
+  "HomeLibrarian.spec" ) CONFIG_FILES="$CONFIG_FILES HomeLibrarian.spec" ;;
   *) { { echo "$as_me:$LINENO: error: invalid argument: $ac_config_target" >&5
 echo "$as_me: error: invalid argument: $ac_config_target" >&2;}
    { (exit 1); exit 1; }; };;

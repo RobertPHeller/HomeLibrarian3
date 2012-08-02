@@ -47,15 +47,7 @@ mkinstalldirs = $(install_sh) -d
 CONFIG_CLEAN_FILES =
 SOURCES =
 DIST_SOURCES =
-am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
-am__vpath_adj = case $$p in \
-    $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
-    *) f=$$p;; \
-  esac;
-am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
-am__installdirs = "$(DESTDIR)$(imagelibdir)"
-imagelibDATA_INSTALL = $(INSTALL_DATA)
-DATA = $(imagelib_DATA)
+DATA = $(noinst_DATA)
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
@@ -146,8 +138,7 @@ GIFS = AmazonLogo.gif DeepwoodsBanner.gif base.gif ffront.gif ffrontSmall.gif \
 	finger.gif fside.gif fsideSmall.gif handle.gif left.gif right.gif
 
 EXTRA_DIST = $(GIFS)
-imagelibdir = $(datadir)/$(PACKAGE)-$(VERSION)/imagelib
-imagelib_DATA = $(GIFS)
+noinst_DATA = $(GIFS)
 all: all-am
 
 .SUFFIXES:
@@ -181,23 +172,6 @@ $(top_srcdir)/configure:  $(am__configure_deps)
 $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 uninstall-info-am:
-install-imagelibDATA: $(imagelib_DATA)
-	@$(NORMAL_INSTALL)
-	test -z "$(imagelibdir)" || $(mkdir_p) "$(DESTDIR)$(imagelibdir)"
-	@list='$(imagelib_DATA)'; for p in $$list; do \
-	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  f=$(am__strip_dir) \
-	  echo " $(imagelibDATA_INSTALL) '$$d$$p' '$(DESTDIR)$(imagelibdir)/$$f'"; \
-	  $(imagelibDATA_INSTALL) "$$d$$p" "$(DESTDIR)$(imagelibdir)/$$f"; \
-	done
-
-uninstall-imagelibDATA:
-	@$(NORMAL_UNINSTALL)
-	@list='$(imagelib_DATA)'; for p in $$list; do \
-	  f=$(am__strip_dir) \
-	  echo " rm -f '$(DESTDIR)$(imagelibdir)/$$f'"; \
-	  rm -f "$(DESTDIR)$(imagelibdir)/$$f"; \
-	done
 tags: TAGS
 TAGS:
 
@@ -236,9 +210,6 @@ check-am: all-am
 check: check-am
 all-am: Makefile $(DATA)
 installdirs:
-	for dir in "$(DESTDIR)$(imagelibdir)"; do \
-	  test -z "$$dir" || $(mkdir_p) "$$dir"; \
-	done
 install: install-am
 install-exec: install-exec-am
 install-data: install-data-am
@@ -281,7 +252,7 @@ info: info-am
 
 info-am:
 
-install-data-am: install-imagelibDATA
+install-data-am:
 
 install-exec-am:
 
@@ -307,16 +278,15 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-imagelibDATA uninstall-info-am
+uninstall-am: uninstall-info-am
 
 .PHONY: all all-am check check-am clean clean-generic distclean \
 	distclean-generic distdir dvi dvi-am html html-am info info-am \
 	install install-am install-data install-data-am install-exec \
-	install-exec-am install-imagelibDATA install-info \
-	install-info-am install-man install-strip installcheck \
-	installcheck-am installdirs maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-generic pdf \
-	pdf-am ps ps-am uninstall uninstall-am uninstall-imagelibDATA \
+	install-exec-am install-info install-info-am install-man \
+	install-strip installcheck installcheck-am installdirs \
+	maintainer-clean maintainer-clean-generic mostlyclean \
+	mostlyclean-generic pdf pdf-am ps ps-am uninstall uninstall-am \
 	uninstall-info-am
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.

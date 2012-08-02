@@ -8,7 +8,8 @@ AllImages  = $(wildcard $(top_srcdir)/Images/*.gif) \
 AllHelpDep = Documentation/UserManual/UserManual.html
 AllHelpFiles = $(wildcard Documentation/UserManual/*)
 
-EXTRA_DIST = bootstrap snodbc.kit Doxyfile.in Doxyfile
+EXTRA_DIST = bootstrap snodbc.kit Doxyfile.in Doxyfile HomeLibrarian.spec.in \
+		HomeLibrarian.spec
 SDX = $(top_srcdir)/BuildScripts/sdx.kit
 TCLKIT = $(top_builddir)/BuildData/tclkit${BEXEEXT}
 

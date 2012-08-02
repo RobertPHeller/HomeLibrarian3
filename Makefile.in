@@ -38,9 +38,10 @@ build_triplet = @build@
 host_triplet = @host@
 target_triplet = @target@
 DIST_COMMON = README $(am__configure_deps) $(srcdir)/Doxyfile.in \
-	$(srcdir)/Makefile.am $(srcdir)/Makefile.in \
-	$(top_srcdir)/configure AUTHORS COPYING ChangeLog INSTALL NEWS \
-	config.guess config.sub install-sh missing
+	$(srcdir)/HomeLibrarian.spec.in $(srcdir)/Makefile.am \
+	$(srcdir)/Makefile.in $(top_srcdir)/configure AUTHORS COPYING \
+	ChangeLog INSTALL NEWS config.guess config.sub install-sh \
+	missing
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
@@ -49,7 +50,7 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno configure.status.lineno
 mkinstalldirs = $(install_sh) -d
-CONFIG_CLEAN_FILES = Doxyfile
+CONFIG_CLEAN_FILES = Doxyfile HomeLibrarian.spec
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)"
 binSCRIPT_INSTALL = $(INSTALL_SCRIPT)
 SCRIPTS = $(bin_SCRIPTS)
@@ -172,7 +173,9 @@ AllImages = $(wildcard $(top_srcdir)/Images/*.gif) \
 
 AllHelpDep = Documentation/UserManual/UserManual.html
 AllHelpFiles = $(wildcard Documentation/UserManual/*)
-EXTRA_DIST = bootstrap snodbc.kit Doxyfile.in Doxyfile
+EXTRA_DIST = bootstrap snodbc.kit Doxyfile.in Doxyfile HomeLibrarian.spec.in \
+		HomeLibrarian.spec
+
 SDX = $(top_srcdir)/BuildScripts/sdx.kit
 TCLKIT = $(top_builddir)/BuildData/tclkit${BEXEEXT}
 man_MANS = man1/HL3.1
@@ -213,6 +216,8 @@ $(top_srcdir)/configure:  $(am__configure_deps)
 $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	cd $(srcdir) && $(ACLOCAL) $(ACLOCAL_AMFLAGS)
 Doxyfile: $(top_builddir)/config.status $(srcdir)/Doxyfile.in
+	cd $(top_builddir) && $(SHELL) ./config.status $@
+HomeLibrarian.spec: $(top_builddir)/config.status $(srcdir)/HomeLibrarian.spec.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
 install-binSCRIPTS: $(bin_SCRIPTS)
 	@$(NORMAL_INSTALL)

@@ -3,6 +3,4 @@ GIFS = AmazonLogo.gif DeepwoodsBanner.gif base.gif ffront.gif ffrontSmall.gif \
 
 EXTRA_DIST = $(GIFS)
 
-imagelibdir = $(datadir)/$(PACKAGE)-$(VERSION)/imagelib
-
-imagelib_DATA = $(GIFS)
+noinst_DATA = $(GIFS)
